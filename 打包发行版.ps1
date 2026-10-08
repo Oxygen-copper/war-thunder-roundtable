@@ -3,7 +3,10 @@
   把「战雷圆桌工程」打成一个可以对外发的压缩包。
   只带程序本体（约 12 MB），不带用户数据、不带两个大模型。
   用法：双击 打包发行版.bat
+  自动化调用：powershell -File 打包发行版.ps1 -NoPause
 #>
+param([switch]$NoPause)
+
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
@@ -17,6 +20,8 @@ New-Item -ItemType Directory -Force -Path $dst | Out-Null
 
 Copy-Item -LiteralPath (Join-Path $root '启动圆桌工程.bat') -Destination $dst
 Copy-Item -LiteralPath (Join-Path $root 'server.py')          -Destination $dst
+Copy-Item -LiteralPath (Join-Path $root 'LICENSE')            -Destination $dst
+Copy-Item -LiteralPath (Join-Path $root 'config.example.json') -Destination $dst
 foreach ($d in 'web', '核心') {
     Copy-Item -LiteralPath (Join-Path $root $d) -Destination $dst -Recurse
 }
@@ -58,5 +63,7 @@ $z.Entries | Group-Object { ($_.FullName -split '/')[1] } | Sort-Object Count -D
     Select-Object -First 8 | ForEach-Object { Write-Host ('   {0,-18} {1} 个文件' -f $_.Name, $_.Count) }
 $z.Dispose()
 Write-Host ''
-Write-Host '按回车关闭。'
-[void][Console]::ReadLine()
+if (-not $NoPause) {
+    Write-Host '按回车关闭。'
+    [void][Console]::ReadLine()
+}
