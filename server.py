@@ -261,7 +261,14 @@ def start_job(title, fn):
     return jid
 
 
-def run_stream(job, cmd, cwd=None, env_extra=None, prefix=''):
+def run_stream(job, cmd, cwd=None, env_extra=None, prefix='', fold=0, head=15, cap=2000):
+    """跑一个子进程，把它的输出送进作业日志。
+
+    有些工具（比如 vgmstream 解一个 bank）单次就吐上万行，全部原样转发会把
+    浏览器的日志区拖死，所以 fold>0 时对输出做折叠：开头 head 行和所有报错行
+    原样保留，其余每 fold 行并成一条进度，最多保留 cap 行。
+    fold=0 表示不折叠（默认，用于本来就该逐行看的进度输出）。
+    """
     env = os.environ.copy()
     env['PYTHONIOENCODING'] = 'utf-8'
     if env_extra:
@@ -270,10 +277,33 @@ def run_stream(job, cmd, cwd=None, env_extra=None, prefix=''):
     p = subprocess.Popen(cmd, cwd=cwd, env=env, stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT, bufsize=1,
                          universal_newlines=True, encoding='utf-8', errors='replace')
+    err_keys = ('error', 'fail', 'fatal', 'unable', 'cannot', "can't",
+                'not found', 'no such', 'denied', 'invalid', 'corrupt',
+                'exception', 'traceback', 'unsupported')
+    total = 0      # 子进程一共吐了多少行
+    shown = 0      # 已经写进日志的行数
+    pending = 0    # 攒着还没汇报的折叠行数
     for line in p.stdout:
         line = line.rstrip()
-        if line:
+        if not line:
+            continue
+        total += 1
+        low = line.lower()
+        keep = (not fold) or (shown < cap and (shown < head or any(k in low for k in err_keys)))
+        if keep:
+            if pending:
+                jlog(job, '  …（折叠 %d 行）' % pending)
+                pending = 0
             jlog(job, line)
+            shown += 1
+        else:
+            pending += 1
+            if fold and pending >= fold:
+                jlog(job, '  … 已读到第 %d 行输出，中间内容已折叠' % total)
+                pending = 0
+                shown += 1
+    if pending:
+        jlog(job, '  …（折叠 %d 行）' % pending)
     code = p.wait()
     if code != 0:
         raise RuntimeError('子进程退出码 %s' % code)
@@ -1078,7 +1108,8 @@ def job_extract(job, cfg, code, kind):
     jlog(job, '来源：%s（%.1f MB）' % (os.path.basename(bank), os.path.getsize(bank) / 1048576.0))
     jlog(job, '输出：%s' % out)
     jlog(job, '正在一次性解出全部命名音频流（这步可能要几分钟，别关窗口）…')
-    run_stream(job, [VGM, '-S', '0', '-o', os.path.join(out, '?n.wav'), bank])
+    # vgmstream 每解一个流就吐一大段解码信息，一个 bank 上万行，这里折叠掉
+    run_stream(job, [VGM, '-S', '0', '-o', os.path.join(out, '?n.wav'), bank], fold=200)
     n = [f for f in os.listdir(out) if f.lower().endswith('.wav')]
     mb = sum(os.path.getsize(os.path.join(out, f)) for f in n) / 1048576.0
     jlog(job, '完成：%d 个 wav，共 %.1f MB' % (len(n), mb))

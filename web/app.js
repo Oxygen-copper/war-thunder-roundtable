@@ -5,6 +5,7 @@ let curVehicle = null;
 let view = 'home', vtab = 'get', vcat = 'ground', convMode = 'sdv', ttsMode = 'manual';
 let onlyMain = true, ttsEntries = [];
 let pollTimer = null, logCursor = 0, curJob = null;
+const LOG_MAX = 3000;          // 日志区最多留多少行，超出丢最老的
 let avatarTab = 'avatars';
 let curAvatarFiles = [];      // 当前分类的文件列表，卡片靠下标回查，避免字符串匹配出错
 
@@ -21,11 +22,24 @@ function toast(msg, kind) {
   d.textContent = msg; $('toasts').appendChild(d);
   setTimeout(() => d.remove(), 4500);
 }
+let logScrollQueued = false;
+function logScrollEnd() {          // 一帧最多滚一次，别每行都逼浏览器重排
+  if (logScrollQueued) return;
+  logScrollQueued = true;
+  requestAnimationFrame(() => {
+    logScrollQueued = false;
+    const el = $('log'); el.scrollTop = el.scrollHeight;
+  });
+}
 function log(msg, kind) {
   const el = $('log');
   if (msg !== undefined) {
     const t = new Date().toLocaleTimeString('zh-CN', { hour12: false });
-    el.textContent += `[${t}] ${msg}\n`; el.scrollTop = el.scrollHeight;
+    // 用文本节点追加是 O(1)。早先这里写的是 el.textContent += …，
+    // 每加一行都要把整段日志重新拼一遍，解包那种上万行的输出会把页面卡死。
+    el.appendChild(document.createTextNode(`[${t}] ${msg}\n`));
+    while (el.childNodes.length > LOG_MAX) el.removeChild(el.firstChild);
+    logScrollEnd();
   }
   if (kind === 'err') toast(msg, 'err');
 }
