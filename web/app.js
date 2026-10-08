@@ -1093,7 +1093,7 @@ function downloadAvatar(img, name) {
 
 /* ------------------------------------------------ 启动 */
 
-/* ------------------------------------------------ 首次启动：自动提取素材 */
+/* ------------------------------------------------ 首次启动：确认素材在哪（只带路，不替你解） */
 
 function firstRunNeeded() {
   const V = (S || {}).voice || {};
@@ -1102,61 +1102,50 @@ function firstRunNeeded() {
   return !anyVoice;                                                // 一条原版语音都没提过 = 全新用户
 }
 
-// 串行跑一串作业：AE 式的「一次一个」，前一个成功才跑下一个
-let frQueue = [];
-function runFirstRunQueue() {
-  if (!frQueue.length) {
-    toast('素材提取完成，可以开始了', 'ok');
-    refresh();
-    return;
-  }
-  const t = frQueue.shift();
-  post(t.url, t.body || {}).then(r => startJob(r, t.title, runFirstRunQueue));
-}
-
 function openFirstRun() {
   const V = (S || {}).voice || {};
   // 只取八大系的主录音，不要「备用录音」那几套
   const mains = (V.sources || []).filter(s => s.cat === 'ground' && s.main && s.available && !s.alt);
   const todo = mains.filter(s => !s.extracted);
   const avTotal = ((S || {}).avatars || []).reduce((a, c) => a + (c.count || 0), 0);
-  const est = Math.round(mains.reduce((a, s) => a + (s.bankMB || 0), 0) * 1.2);
-  const names = [...new Set(mains.map(s => s.label))];
+  const est = Math.round(todo.reduce((a, s) => a + (s.bankMB || 0), 0) * 1.2);
+  const names = [...new Set(todo.map(s => s.label))];
   openModal(`<button class="modal-x" data-close title="关闭">×</button>
-    <h3>第一次使用 · 先把素材提取出来</h3>
+    <h3>第一次使用 · 先确认素材在哪儿</h3>
     <p class="sub">做语音包的原料，得从<b>你自己的游戏</b>里解出来。这一步只读本机文件，不联网、也不改动游戏本体。</p>
 
     <div class="gatebox">
-      <div class="gtop"><b>我会提取这些</b></div>
-      <div class="gsub">
-        ${avTotal === 0 ? '· 全部头像 / 头像框 / 资料页头图 —— 约 10 MB<br/>' : ''}
-        · 陆战八大系的原版乘员语音 —— ${names.map(esc).join('、')}${est ? `，约 ${est} MB（估算）` : ''}
-      </div>
+      <div class="gtop"><b>已经找到你的游戏</b></div>
       <div class="gpath">游戏目录：${esc(V.gameRoot)}</div>
-      <div class="gpath">游戏里能找到的语种一共 ${(V.sources || []).length} 个；这次只提八大系，其余的以后可以在「下载乘员组语音」里单独点。</div>
+      <div class="gsub">里面一共收录了 ${(V.sources || []).length} 个语种的乘员语音。解哪个、解几个由你说了算，
+        工具不会替你一次性全解一遍。</div>
     </div>
 
     <div class="gatebox soft">
-      <div class="gtop"><b>提取出来的东西放在哪</b></div>
-      <div class="gsub">放在工具目录下的 <code>语音\\原版\\</code> 和 <code>头像\\</code> 里，只有你自己这台机器上有。
-        这些素材的版权属于 Gaijin，请勿二次分发。</div>
+      <div class="gtop"><b>接下来去哪</b></div>
+      <div class="gsub">
+        点下面的按钮进「下载乘员组语音」，挑一个语种点一下才会开始解包 —— 建议先从八大系入手，
+        素材量大、换声时口音问题也最少。
+        ${names.length ? `<br/>目前还没解过的有：${names.map(esc).join('、')}${est ? `，加起来约 ${est} MB（估算）` : ''}。` : '<br/>八大系看起来都已经解过了，可以直接开始做。'}
+        ${avTotal === 0 ? '<br/>头像在另一个栏目里，想要的时候再单独提，约 10 MB。' : ''}
+        <br/>解出来的东西放在工具目录下的 <code>语音\\原版\\</code>，只有你自己这台机器上有。
+        这些素材的版权属于 Gaijin，请勿二次分发。
+      </div>
     </div>
 
     <div class="foot">
       <button class="btn" data-close>以后再说</button>
-      <button class="btn primary" id="firstRunGo">开始提取</button>
+      <button class="btn primary" id="firstRunGo">去挑语种</button>
     </div>`,
     box => {
       const b = box.querySelector('#firstRunGo');
-      if (b) b.onclick = async () => {
+      if (b) b.onclick = () => {
+        // 这个按钮只负责把人带到「下载乘员组语音」，解哪些由用户自己点。
+        // 早先它会把头像＋八大系一次性排进队列自动解包，等于替用户做了决定。
         closeModal();
-        frQueue = [];
-        if (avTotal === 0) frQueue.push({ url: '/api/avatars/extract', body: {}, title: '提取头像' });
-        todo.forEach(s => frQueue.push({ url: '/api/voice/extract', body: { code: s.code, cat: s.cat },
-                                         title: '提取 ' + s.label }));
-        if (!frQueue.length) { toast('素材都齐了，不用再提', 'ok'); return; }
-        log('▶ 初次提取：共 ' + frQueue.length + ' 个作业');
-        runFirstRunQueue();
+        setView('voice');
+        setVTab('get');
+        setCat('ground');
       };
     });
 }
