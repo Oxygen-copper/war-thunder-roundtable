@@ -1,0 +1,956 @@
+[
+  {
+    "id": "cardicon_07",
+    "zh": "",
+    "en": "",
+    "desc": "Default profile icon"
+  },
+  {
+    "id": "cardicon_17",
+    "zh": "",
+    "en": "",
+    "desc": "Default profile icon"
+  },
+  {
+    "id": "cardicon_25",
+    "zh": "",
+    "en": "",
+    "desc": "Default profile icon"
+  },
+  {
+    "id": "cardicon_28",
+    "zh": "",
+    "en": "",
+    "desc": "Default profile icon"
+  },
+  {
+    "id": "cardicon_28_panfilovcev",
+    "zh": "",
+    "en": "",
+    "desc": "Special profile icon for event"
+  },
+  {
+    "id": "cardicon_31",
+    "zh": "",
+    "en": "",
+    "desc": "Special profile icon for event"
+  },
+  {
+    "id": "cardicon_33",
+    "zh": "狡黠海盗",
+    "en": "Pirate \"\"Cunning\"\"",
+    "desc": "One of the air pirates of the \"\"TailSpin\"\" event in human form"
+  },
+  {
+    "id": "cardicon_33_animal",
+    "zh": "狐狸飞行员",
+    "en": "Fox Pilot",
+    "desc": "One of the air pirates of the \"\"TailSpin\"\" event"
+  },
+  {
+    "id": "cardicon_34",
+    "zh": "忧郁海盗",
+    "en": "Pirate \"\"Sullen\"\"",
+    "desc": "One of the air pirates of the \"\"TailSpin\"\" event in human form"
+  },
+  {
+    "id": "cardicon_34_animal",
+    "zh": "棕熊飞行员",
+    "en": "Bear Pilot",
+    "desc": "One of the air pirates of the \"\"TailSpin\"\" event"
+  },
+  {
+    "id": "cardicon_abrams",
+    "zh": "克赖顿·艾布拉姆斯",
+    "en": "Creighton Abrams",
+    "desc": "Creighton Abrams was the commander of 37th Tank Battalion in the U.S. Army, which regularly served in the vanguard of General Patton’s Third Army. When the Allied forces were surrounded at Bastogne during the German counter-offensive in the Ardennes, it was Abrams’ 37th Battalion that broke the siege of the city. General Patton said of Abrams, \"\"I’m supposed to be the best tank commander in the Army, but I have one peer—Abe Abrams. He’s the world champion.\"\""
+  },
+  {
+    "id": "cardicon_alexandra_samusenko",
+    "zh": "亚历山德拉·格里戈里耶夫娜·萨穆森科",
+    "en": "Aleksandra Grigoryevna Samusenko",
+    "desc": "Aleksandra Samusenko was a tank commander and liaison officer who fought in the Soviet army from 1941 until her death in 1945. She was the only woman who held the rank of deputy commander of a tank battalion. For her bravery in the Battle of Kursk she was awarded the Order of the Red Star. Samusenko died from her wounds on March 3rd, 1945. She’s buried in the town square of Lobez, Poland."
+  },
+  {
+    "id": "cardicon_ancient_slav",
+    "zh": "斯拉夫古人",
+    "en": "Ancient Slav",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_boris",
+    "zh": "波里斯 (电视动画版)",
+    "en": "Boris's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_greggates",
+    "zh": "古雷格·凯 (电视动画版)",
+    "en": "Greg Gates's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_gustav",
+    "zh": "古斯塔夫 (电视动画版)",
+    "en": "Gustav's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_helicopterpilot",
+    "zh": "直升机飞行员 (电视动画版)",
+    "en": "Helicopter pilot's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_kimaba",
+    "zh": "金·亚柏 (电视动画版)",
+    "en": "Kim Aba's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_kitoriparvaneh",
+    "zh": "绮多丽·帕瓦娜 (电视动画版)",
+    "en": "Kitri Parvāneh's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_makotoshinjo",
+    "zh": "新庄真 (电视动画版)",
+    "en": "Makoto Shinjo's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_mccoy",
+    "zh": "马奎 (电视动画版)",
+    "en": "McCoy's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_mickeysimon",
+    "zh": "米奇·赛门 (电视动画版)",
+    "en": "Mickey Simon's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_roundel",
+    "zh": "兰登尔 (电视动画版)",
+    "en": "Roundel's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_sakivashtar",
+    "zh": "沙奇·巴胥塔 (电视动画版)",
+    "en": "Saki Vashtar's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_satorukanzaki",
+    "zh": "神崎悟 (电视动画版)",
+    "en": "Satoru Kanzaki's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_area88_shinkazama",
+    "zh": "风间真 (电视动画版)",
+    "en": "Shin Kazama's profile icon (TV anime version)",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_armored_apex_man",
+    "zh": "终极猎手",
+    "en": "Apex Predator",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_armored_apex_woman",
+    "zh": "巅峰女武神",
+    "en": "Apex Valkyrie",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_arthur_waller",
+    "zh": "阿瑟·克雷格·沃勒",
+    "en": "Arthur Craig Waller",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_assault",
+    "zh": "攻击机飞行员",
+    "en": "Attack pilot",
+    "desc": "Special profile icon for the \"\"Firepower\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_atomic_thunder_left",
+    "zh": "双生舞伶·左伶",
+    "en": "Twin Left",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_atomic_thunder_right",
+    "zh": "双生舞伶·右伶",
+    "en": "Twin Right",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_auctioneer",
+    "zh": "拍卖好手",
+    "en": "Auctioneer",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_australia_day_2025",
+    "zh": "袋鼠下士",
+    "en": "Corporal Skippy",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_avigdor_ben_gal",
+    "zh": "阿维格多·本戈尔",
+    "en": "Avigdor Ben-Gal",
+    "desc": "During the Yom Kippur War he commanded Israel's 7th Armored Brigade that held off the Syrian advance on the Golan Heights. Ben-Gal had foreseen the war two weeks before it started and began to prepare his brigade despite being laughed at. As a result the 7th Armored Brigade was the only unit in the state of full readiness at the start of the war. Their heroism and Ben-Gal's leadership were instrumental in ensuring Israel's victory over Syria."
+  },
+  {
+    "id": "cardicon_bader",
+    "zh": "道格拉斯·巴德",
+    "en": "Douglas Bader",
+    "desc": "Douglas Bader was a Royal Air Force ace. In 1931, he lost both legs in an accident and was discharged, but with the outbreak of the Second World War, he returned to service. Bader participated in the Battle of Britain, flying over occupied Europe. On August 9th, 1941, he was shot down over France and while bailing out lost one of his prosthetic legs. The Germans received Bader well and even allowed British aircraft to airdrop a prosthetic leg for him. In total, Bader was credited with at least 20 air victories."
+  },
+  {
+    "id": "cardicon_brazhnikov",
+    "zh": "格里高利·布拉日尼科夫",
+    "en": "Grigory Ivanovich Brazhnikov",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_bundeswehr_infantryman",
+    "zh": "联邦国防军步兵",
+    "en": "Bundeswehr Infantryman",
+    "desc": "A special profile icon for the \"\"Armour Breaking Ambusher\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_centurion",
+    "zh": "百夫长",
+    "en": "Centurion",
+    "desc": "Special profile icon for the \"\"Steel Centurion\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_ch_special_forces",
+    "zh": "中国空降兵",
+    "en": "Chinese paratrooper",
+    "desc": "A special profile icon for the \"\"Flying Dragon\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_charles_carpenter",
+    "zh": "查尔斯·卡彭特",
+    "en": "Charles Carpenter",
+    "desc": "Charles Carpenter was an American pilot who fought in France during the Second World War. Carpenter was given an L-4 Grasshopper for reconnaissance, but decided to go beyond that role and installed bazookas on each wing, earning him the nickname “Bazooka Charlie”. His plane was called Rosie the Rocketer. During the Battle of Arracourt, he destroyed a German armored personnel carrier and four tanks. In an interview, he later described his approach to combat as \"\"attack, attack, and then attack again\"\"."
+  },
+  {
+    "id": "cardicon_charles_upham",
+    "zh": "查尔斯·乌普海姆",
+    "en": "Charles Upham",
+    "desc": "This simple farmer from New Zealand had shown such heroism during battles with Axis powers on Crete and in Egypt that he was awarded the Victoria Cross, the highest military award of Great Britain, twice. Upham fearlessly rushed the enemy fortifications, cleared the machine gun nests with grenades, and kept leading his squad into battle even after being seriously wounded. Due to these brave actions, he became the most highly decorated soldier of the British Commonwealth of Nations."
+  },
+  {
+    "id": "cardicon_chester_nimitz",
+    "zh": "切斯特·威廉·尼米兹",
+    "en": "Chester William Nimitz",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_chinese_military",
+    "zh": "中国人民解放军军官",
+    "en": "PLA officer",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_colin_gray",
+    "zh": "科林·福克兰·格雷",
+    "en": "Colin Falkland Gray",
+    "desc": "Colin Gray is the highest-scoring New Zealand ace in history, credited with at least 27 aerial victories. He flew with the Royal Air Force and took part in the Battle of France, the Battle of Britain, the North African campaign, and the invasion of Sicily. Gray was awarded the Distinguished Service Order, as well as the Distinguished Flying Cross with two bars."
+  },
+  {
+    "id": "cardicon_combat",
+    "zh": "",
+    "en": "",
+    "desc": "Special profile icon for event"
+  },
+  {
+    "id": "cardicon_combat_exoskeleton",
+    "zh": "机动步兵",
+    "en": "Mobile Warrior",
+    "desc": "A soldier of a special detachment of mobile infantry"
+  },
+  {
+    "id": "cardicon_cosmonaut_ussr_01",
+    "zh": "尤里·加加林",
+    "en": "Yuri Gagarin",
+    "desc": "Another milestone in the history of War Thunder has been reached - 121,784 players that were online at the same time! May these memorable icons stop you forgetting about that achievement."
+  },
+  {
+    "id": "cardicon_david_currie",
+    "zh": "戴维·柯里",
+    "en": "David Currie",
+    "desc": "During the Falaise operation, David Currie was a major in the Canadian army. He led the assault and held position at St. Lamber from where a significant part of German forces tried to flee the pocket. Despite the Wehrmacht forces being more numerous, Currie’s tactical decisions and leadership skills allowed the Canadians to destroy over 500 and capture over 2000 enemy soldiers. He was awarded the Victoria Cross, becoming the only member of the Royal Canadian Armoured Corps to receive it."
+  },
+  {
+    "id": "cardicon_default",
+    "zh": "",
+    "en": "",
+    "desc": "Default profile icon"
+  },
+  {
+    "id": "cardicon_desert_01",
+    "zh": "伯尼·马勒克",
+    "en": "Burney Malleck",
+    "desc": "Lieutenant of the House of Hawk, arrived on the sand planet with his Prince."
+  },
+  {
+    "id": "cardicon_desert_02",
+    "zh": "战鹰家族王子",
+    "en": "Prince of the House of Hawk",
+    "desc": "The young ruler of the Noble House, as well as the owner of the sand planet."
+  },
+  {
+    "id": "cardicon_desert_03",
+    "zh": "卡纳安·德纳利",
+    "en": "Kanaan Denali",
+    "desc": "Master of arms of the House of the Hawk, accompanying the young Prince and being his bodyguard."
+  },
+  {
+    "id": "cardicon_desert_cinnamon_01",
+    "zh": "伯尼·马勒克（调料觉醒）",
+    "en": "Burney Malleck, touched by a cinnamon brush",
+    "desc": "...a long stay in the desert, strewn with fragrant cinnamon, opened up new opportunities for Burney. And blue eyes like a mark..."
+  },
+  {
+    "id": "cardicon_desert_cinnamon_02",
+    "zh": "战鹰家族王子（调料觉醒）",
+    "en": "Prince of the House of Hawk, touched by a cinnamon brush",
+    "desc": "...being in forced exile and wandering in the desert, the young prince came into contact with cinnamon, leaving its mark on him..."
+  },
+  {
+    "id": "cardicon_desert_cinnamon_03",
+    "zh": "卡纳安·德纳利（调料觉醒）",
+    "en": "Kanaan Denali, touched by a cinnamon brush",
+    "desc": "...a faithful friend and mentor, who followed his master into the endless desert. The mark of the ubiquitous cinnamon appeared on him as well..."
+  },
+  {
+    "id": "cardicon_desmond_doss",
+    "zh": "戴斯蒙德·多斯",
+    "en": "Desmond Doss",
+    "desc": "Desmond Doss was a conscientious objector during World War II but still enlisted as a medic. Other soldiers initially despised him, but that quickly changed after he saved their lives during the battle for Guam. In Okinawa, he single-handedly carried 50 to 100 wounded men from the battlefield. His deeds earned him the Medal of Honor and were immortalized in the 2016 Mel Gibson’s movie Hacksaw Ridge."
+  },
+  {
+    "id": "cardicon_dmitry_osatyuk",
+    "zh": "德米特里·伊万诺维奇·奥萨丘克",
+    "en": "Dmitry Ivanovich Osatyuk",
+    "desc": "Dmitry Osatyuk was the commander of a tank company on the Leningrad Front. On January 12, 1943, his light tank was cut off from his company by three heavy German tanks he couldn't oppose in any way. Using himself as bait, Osatyuk led the enemy tanks under artillery fire, and then defeated the enemy infantry in close combat, using machine guns, cannon tank tracks. On January 18, his company, having made its way through German positions, was the first to meet the troops of the Volkhov Front, thus opening a land corridor to Leningrad and breaching its blockade. On January 21, Osatyuk's tank was destroyed, but he pulled his wounded driver out of the tank, got him to safety, and kept fighting in another tank."
+  },
+  {
+    "id": "cardicon_dobrinya",
+    "zh": "多布雷尼亚",
+    "en": "Dobrinya",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_dogfighting_pilot",
+    "zh": "长空之舞",
+    "en": "Dogfighting Pilot",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_douglas_macarthur",
+    "zh": "道格拉斯·麦克阿瑟",
+    "en": "Douglas MacArthur",
+    "desc": "Douglas MacArthur is among the most renowned American military generals. During World War I, he achieved the rank of Brigadier General, and in 1925 at just 44 years old, he became the youngest major general in the U.S. Army before serving as Army Chief of Staff. In World War II, MacArthur commanded U.S. Army Forces in the Far East, leading successful counteroffensives in Papua, New Guinea, and the Philippines. He later accepted Japan’s surrender and was appointed Supreme Commander of the Allied Powers."
+  },
+  {
+    "id": "cardicon_edgar",
+    "zh": "詹姆斯·埃德加·约翰逊",
+    "en": "James Edgar Johnson",
+    "desc": "James Edgar Johnson was a British Royal Air Force fighter ace who flew the Spitfire. Piloting of course required both hands, which was a challenge for James due to a previous sporting injury he sustained. He was offered a position as an instructor but declined, opting instead to undergo shoulder surgery, which caused him to miss the Battle of Britain. He would go on to more than make up for this however, completing 700 combat sorties and shooting down 34 German aircraft, making him the most successful ace on the Western Front against the Luftwaffe."
+  },
+  {
+    "id": "cardicon_elsa",
+    "zh": "爱尔莎",
+    "en": "Elsa",
+    "desc": "Senrai Maidens Fighter"
+  },
+  {
+    "id": "cardicon_emily",
+    "zh": "艾米莉",
+    "en": "Emily",
+    "desc": "Senrai Maidens Fighter"
+  },
+  {
+    "id": "cardicon_esmonde",
+    "zh": "尤金·埃斯蒙德",
+    "en": "Eugene Esmonde",
+    "desc": "Eugene Esmond was a Fleet Air Arm pilot during World War II. He earned the Distinguished Service Order for his participation in the attack on the German battleship Bismarck. On February 12th, 1942, Esmond led a torpedo bomber squadron against a heavily defended German convoy crossing the Strait of Dover as part of Operation Cerberus. Left without cover, he continued the attack on enemy ships under heavy fire. As a result, his entire squad was destroyed with Esmond himself killed. For his heroism, he was posthumously awarded the Victoria Cross."
+  },
+  {
+    "id": "cardicon_esport_drops",
+    "zh": "电竞飞行员",
+    "en": "Esports Pilot",
+    "desc": "A special profile icon for the \"\"Thunder CUP 2024 — Twitch Drops\"\" event"
+  },
+  {
+    "id": "cardicon_esportsman",
+    "zh": "电竞玩家",
+    "en": "eSportsman",
+    "desc": "Special profile icon for eSports activities of the game"
+  },
+  {
+    "id": "cardicon_experienced_shooter",
+    "zh": "天兵神射手",
+    "en": "Skilled Marksman",
+    "desc": "A special profile icon for the \"\"Skilled Marksman\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_flametrooper",
+    "zh": "喷火兵",
+    "en": "Flametrooper",
+    "desc": "Special profile icon for the \"\"Smell of Victory\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_football_fan",
+    "zh": "狂热球迷",
+    "en": "Football fan",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_football_marathon_2023",
+    "zh": "虎之队车手",
+    "en": "\"\"Tigers\"\" team driver",
+    "desc": "\"\"Tigers\"\" team football tank driver"
+  },
+  {
+    "id": "cardicon_football_marathon_2024",
+    "zh": "龙之队车手",
+    "en": "\"\"Dragons\"\" team driver",
+    "desc": "\"\"Dragons\"\" team football tank driver"
+  },
+  {
+    "id": "cardicon_fr_legioner",
+    "zh": "法国军团老兵",
+    "en": "Veteran of the French Legion",
+    "desc": "Special profile icon for the \"\"Fearless Voltigeur\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_fr_sapper",
+    "zh": "外籍军团工兵",
+    "en": "Foreign Legion Sapper",
+    "desc": "A special profile icon for the \"\"The Last Legionnaire\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_francis_sherman_currey",
+    "zh": "弗朗西斯·谢尔曼·柯里",
+    "en": "Francis Sherman Currey",
+    "desc": "Francis Currey served in the US Army during the Battle of the Bulge. The German offensive was forcing the Americans defending near the town of Malmedy to retreat, as they were under continuous heavy fire. Currey, using a bazooka while being suppressed by German forces, managed to neutralize four enemy tanks, forcing their crews to abandon their vehicles. The destruction of these vehicles halted the advance, saving his fellow soldiers. Currey was later awarded the Medal of Honor for his heroism."
+  },
+  {
+    "id": "cardicon_gasmask",
+    "zh": "戴防毒面具的坦克手",
+    "en": "Tankman in a gas mask",
+    "desc": "Special profile icon for the \"\"Armored Elephant\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_general_01",
+    "zh": "阿瑟·特德",
+    "en": "Arthur Tedder",
+    "desc": "Special profile icon for the \"\"75th Anniversary of the Great Victory\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_general_02",
+    "zh": "奥马尔·布拉德利",
+    "en": "Omar Bradley",
+    "desc": "Special profile icon for the \"\"75th Anniversary of the Great Victory\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_general_03",
+    "zh": "乔治·巴顿",
+    "en": "George S. Patton",
+    "desc": "Special profile icon for the \"\"75th Anniversary of the Great Victory\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_general_04",
+    "zh": "康斯坦丁·康斯坦丁诺维奇·罗科索夫斯基",
+    "en": "Konstantin Konstantinovich Rokossovsky",
+    "desc": "Special profile icon for the \"\"75th Anniversary of the Great Victory\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_general_05",
+    "zh": "格里高利·康斯坦丁诺维奇·朱可夫",
+    "en": "Georgy Konstantinovich Zhukov",
+    "desc": "Special profile icon for the \"\"75th Anniversary of the Great Victory\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_general_06",
+    "zh": "伯纳德·蒙哥马利",
+    "en": "Bernard Montgomery",
+    "desc": "Special profile icon for the \"\"75th Anniversary of the Great Victory\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_gerard_roop",
+    "zh": "杰拉德·卢普",
+    "en": "Gerard Roope",
+    "desc": "During World War II Gerard Roope, commander of HMS Glowworm, was the first to perform a heroic deed deserving of a Victoria Cross, the highest military award of the British forces. On April 8th, 1940, near the coast of Norway, Glowworm found itself outgunned against the German heavy cruiser Admiral Hipper. Heavily damaged, Glowworm rammed the enemy ship, piercing her hull, and fired a last shot before sinking. Gerard Roope perished helping the crew escape the sinking ship. Hellmuth Heye, commander of the Admiral Hipper, was so impressed by Roope's actions that he wrote a letter to the British authorities recommending him for a posthumous award."
+  },
+  {
+    "id": "cardicon_germ_tanker_gw",
+    "zh": "德意志帝国装甲兵",
+    "en": "German Empire Tankman",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_golovachev",
+    "zh": "帕维尔·戈洛瓦乔夫",
+    "en": "Pavel Yakovlevich Golovachev",
+    "desc": "Pavel Golovachev was a Soviet pilot ace who fought throughout the Second World War and scored at least 30 aerial victories. He was awarded Hero of the Soviet Union twice. During the East Prussian Operation in December 1944, Golovachev ran out of ammunition after pursuing a German reconnaissance aircraft and opted to ram it. He destroyed the enemy’s tail with the propeller of his La-7 and was then able to pull out of spin and return to the airfield. For this, he received the Order of the Red Banner and later a second title of Hero of the Soviet Union. He scored ten more victories near Königsberg using this La-7, later switching it for the Yak-9. He ended the war in the skies over Berlin."
+  },
+  {
+    "id": "cardicon_gregory_boyington",
+    "zh": "格雷戈里・博因顿",
+    "en": "Gregory Boyington",
+    "desc": "A fighter ace who fought in WWII against Japan in a US volunteer group called the Flying Tigers, where he was a flight leader. Later he joined the US Marine Corps, where he was nicknamed \"\"Pappy\"\" on account of his age (he was 30). In two years Boyington downed 26 enemy aircraft but was shot down in early 1944 and spent the rest of the war in captivity."
+  },
+  {
+    "id": "cardicon_hobart",
+    "zh": "帕西·霍巴特",
+    "en": "Percy Hobart",
+    "desc": "By the beginning of World War II, Percy Hobart was a major general and an expert in armored vehicles. Because of his unusual ideas, Hobart was forced into retirement in 1940, but after the failure of the Allied amphibious assault at the Battle of Dieppe, innovative ideas were in great demand. In 1943 Hobart converted the Churchill and Sherman tanks of his 79th Armored Division into engineering marvels dubbed \"\"Hobart’s Funnies\"\". Some of these included the flamethrower Crocodile tank, mine-resistant Crab, amphibious DD and the enemy fortification destroyer, the Churchill AVRE. The Allies were impressed by Hobart’s work and his \"\"funny\"\" vehicles provided invaluable assistance during the Normandy Landings."
+  },
+  {
+    "id": "cardicon_horatio_nelson",
+    "zh": "霍雷肖·纳尔逊",
+    "en": "Horatio Nelson",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_how_to_fly",
+    "zh": "到底咋飞",
+    "en": "How To Fly",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_hussar",
+    "zh": "骠骑兵队长",
+    "en": "Hussar Squadron Officer",
+    "desc": "A special profile icon for the \"\"Her Majesty's Hussar\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_ind_pilot_mk",
+    "zh": "印度飞行员",
+    "en": "Indian Pilot",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_italian_fighter_pilot",
+    "zh": "意大利战斗机飞行员",
+    "en": "Italian Fighter Pilot",
+    "desc": "A special profile icon for the \"\"Brave Archer\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_jalil_zandi",
+    "zh": "贾利勒·赞迪",
+    "en": "Jalil Zandi",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_james_gavin",
+    "zh": "詹姆斯·莫里斯·加文",
+    "en": "James Maurice Gavin",
+    "desc": "James Maurice Gavin was a Lieutenant General of the US Army, an outstanding theorist and practitioner of the use of airborne troops. As a colonel, he actively participated in the invasion of Sicily during Operation Husky, after which he was promoted to brigadier general. Despite this, he did not stop parachuting alongside his men, and became the only American general to make four combat parachute jumps during the war. For this, he received the \"\"jumping general\"\" nickname. He saw action until the end of the war, parachuting during D-Day and fighting at the Bulge."
+  },
+  {
+    "id": "cardicon_jan_zumbach",
+    "zh": "杨·祖巴赫",
+    "en": "Jan Zumbach",
+    "desc": "Jan Zumbach was a Polish pilot who served in the Royal Air Force during World War II. He flew a Supermarine Spitfire and shot down at least 12 enemy aircraft. Zumbach rose to the rank of squadron leader and was awarded the War Order of Virtuti Militari, the highest Polish military decoration."
+  },
+  {
+    "id": "cardicon_john_basilone",
+    "zh": "约翰·巴斯隆",
+    "en": "John Basilone",
+    "desc": "John Basilone was a US Marine Corps Sergeant tasked with defending the Henderson Field airfield on Guadalcanal. On October 24th, 1942, his unit came under attack by the Japanese forces, and two machine gun sections under Basilone’s command held them off for two days, not stopping even after only three defenders were left. As ammo began running low, Basilone fought through hostile ground to get supplies to his machine gunners. For his heroism during the battle, he was awarded the Medal of Honor, US military’s highest award."
+  },
+  {
+    "id": "cardicon_john_campbell",
+    "zh": "约翰·坎贝尔",
+    "en": "John Campbell",
+    "desc": "John \"\"Jock\"\" Campbell was a British Army officer who served in North Africa at the beginning of World War II. He favored rapid attacks on Axis forces using small groups of artillery, armored vehicles and motorized infantry: anecdotally called \"\"Jock Columns\"\". During Operation Crusader, Campbell's brigade defended Sidi Rezegh airport, south of Tobruk, for two days. Campbell personally led the battle, constantly being at the epicenter of events inspiring his subordinates with his courage. For his heroism he was awarded the highest military award in Britain — the Victoria Cross."
+  },
+  {
+    "id": "cardicon_john_lavarack",
+    "zh": "约翰·拉瓦拉克",
+    "en": "John Lavarack",
+    "desc": "Lieutenant General Sir John Dudley Lavarack was a veteran of two World Wars and governor of the state of Queensland. During World War II, he commanded Australian units in North Africa against Rommel's army."
+  },
+  {
+    "id": "cardicon_kate",
+    "zh": "凯特",
+    "en": "Kate",
+    "desc": "Senrai Maidens Fighter"
+  },
+  {
+    "id": "cardicon_konev",
+    "zh": "伊万·斯捷潘诺维奇·科涅夫",
+    "en": "Ivan Stepanovich Konev",
+    "desc": "Ivan Konev started as a Lieutenant General in the Second World War. He participated in the defense of Moscow and the Battle of Kursk, and in 1944, he was promoted to marshal. In 1945, troops under his command liberated Auschwitz and Silesia, and participated in the assault on Berlin alongside Marshal Zhukov’s forces."
+  },
+  {
+    "id": "cardicon_kosmodemyansky",
+    "zh": "亚历山大·阿纳托利耶维奇·科斯莫杰米扬斯基",
+    "en": "Aleksandr Anatolyevich Kosmodemyansky",
+    "desc": "Aleksandr was a younger brother of a saboteur Zoya Kosmodemyanskaya, the first woman awarded the Hero of the Soviet Union during World War II. Aleksandr went to the front at the age of 18 with the goal of avenging the death of his sister. He participated in the expulsion of German troops from Belarus and the Baltic states, but became famous during the assault on Königsberg. On April 6th, 1945, Aleksandr’s vehicle was the first from his unit to cross the Landgraben Canal. Then, near Königsberg, his battery captured the Queen Louise fort, forcing more than 500 enemy soldiers to surrender. He died on April 13th, 1945, in the battle for East Prussia. He was posthumously awarded the Hero of the Soviet Union."
+  },
+  {
+    "id": "cardicon_kovzan",
+    "zh": "鲍里斯·伊万诺维奇·科夫赞",
+    "en": "Boris Ivanovich Kovzan",
+    "desc": "Boris Kovzan participated in World War II since the invasion of the USSR by Germany and shot down his first enemy plane on June 24th, 1941. Kovzan was a true master at ramming: he destroyed four enemy aircraft using this strategy, while remaining alive. Kovzan performed his final ram on August 13th, 1942, near Staraya Russa: he encountered superior enemy forces and received a serious head wound, losing his right eye. As a result of the collision, Kovzan was thrown out of his plane's cockpit at an altitude of 6,000 m, and it was only near the ground that he was able to open his parachute. After 10 months in the hospital, he returned to service and in 1943 received the title Hero of the Soviet Union."
+  },
+  {
+    "id": "cardicon_legioner",
+    "zh": "军团战士",
+    "en": "Legioner",
+    "desc": "Special profile icon for the \"\"Steel Centurion\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_leo_major",
+    "zh": "利奥·梅杰",
+    "en": "Leo Major",
+    "desc": "Leo Major is the only Canadian to receive the Distinguished Conduct Medal for service in multiple wars. He participated in the Normandy Landings and lost his left eye in the Battle of Caen, but insisted on remaining in the line of duty. During the Battle of the Scheldt, he single-handedly captured 93 German soldiers. Major received his first Distinguished Conduct Medal in 1945 for single-handedly liberating the Dutch city of Zwolle. His overnight actions forced German forces to retreat, prompting the Allies to cancel a planned artillery bombardment on the city. He received his second medal six years later for capturing strategic hills in the Korean War."
+  },
+  {
+    "id": "cardicon_lev_roshchin",
+    "zh": "列夫·米哈伊洛维奇·罗辛",
+    "en": "Lev Mikhailovich Roshchin",
+    "desc": "Lev Mikhailovich Roshchin arrived at the front at the age of 19 in December 1941. He was a skilled pilot and quickly earned the rank of lieutenant, becoming a squadron commander. During the war, he fought in the Caucasus, Crimea, Leningrad and the Baltics, completing 565 combat sorties. For exemplary performance of combat missions in the Baltic operation, he was awarded the Hero of the Soviet Union title."
+  },
+  {
+    "id": "cardicon_ling",
+    "zh": "阿翎",
+    "en": "Ling",
+    "desc": "Senrai Maidens Fighter"
+  },
+  {
+    "id": "cardicon_lizard",
+    "zh": "蜥蜴人车长",
+    "en": "Lizard Commander",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_loot_carrier_driver",
+    "zh": "截击车手",
+    "en": "Interceptor driver",
+    "desc": "A mad driver of an Interceptor, rushing to get out of the Forgotten Lands with a full load of valuable resources."
+  },
+  {
+    "id": "cardicon_luftwaffe_pilot",
+    "zh": "德国轰炸机飞行员",
+    "en": "Bomber pilot",
+    "desc": "A special profile icon for the \"\"Guided Fury\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_lydia_litvyak",
+    "zh": "莉莉娅·弗拉基米罗芙娜·利特维亚克",
+    "en": "Lydia Vladimirovna Litvyak",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_lydia_litvyak_2",
+    "zh": "莉莉娅·弗拉基米罗芙娜·利特维亚克",
+    "en": "Lydia Vladimirovna Litvyak",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_mackensen",
+    "zh": "奥古斯特·冯·马肯森",
+    "en": "August von Mackensen",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_marcario_garcia",
+    "zh": "马卡里奥·加西亚",
+    "en": "Marcario Garcia",
+    "desc": "Marcario Garcia was the first Mexican immigrant to receive the Medal of Honor, USA's highest military award. Garcia participated in the Invasion of Normandy and received his hirst honors in the summer of 1944. In the Battle of Hürtgen Forest while fighting the German forces under Grosshau, Garcia destroyed two enemy machine gun nests and took four prisoners all by himself, and kept fighting until completing his task despite being injured."
+  },
+  {
+    "id": "cardicon_marcel_albert",
+    "zh": "马塞尔·阿尔贝特",
+    "en": "Marcel Albert",
+    "desc": "A French pilot who defected to the Allies after his homeland was captured by Germany. He fought for the RAF in 1940-42, and from 1943 was a part of the Normandy squadron (later Normandy-Niemen regiment) that fought the Luftwaffe on the eastern front. He took part in the Battle of Kursk, Operation Bagration and the East Prussian offensive. For his valour in battles he earned the highest Soviet decorations: title of Hero of the Soviet Union, the Gold Star and the Order of Lenin."
+  },
+  {
+    "id": "cardicon_mariya",
+    "zh": "玛丽亚",
+    "en": "Maria",
+    "desc": "Senrai Maidens Fighter"
+  },
+  {
+    "id": "cardicon_marmaduke",
+    "zh": "马默杜克·帕特尔",
+    "en": "Marmaduke Pattle",
+    "desc": "Marmaduke \"\"Pat\"\" Pattle was a South African-born British pilot and one of the Allies’ most successful aces. He is credited with shooting down more than fifty enemy aircraft in less than a year in combat, most of them in a Hawker Hurricane. He fought in North Africa and Greece, leading No. 80 Squadron, which included the famous writer Roald Dahl. Pattle was killed on the 20th of April, 1941, in an air battle near Athens against German Bf 110s."
+  },
+  {
+    "id": "cardicon_matsievich",
+    "zh": "瓦西里·安东诺维奇·马采维奇",
+    "en": "Vasily Antonovich Matsievich",
+    "desc": "Vasily Antonovich Matsievich was an ace pilot who fought in World War II from 1941. The fighter squadron he commanded defended besieged Leningrad from enemy raids and carried out assault raids on the positions of Wehrmacht. Soon after the siege of Leningrad was lifted, Matsievich was awarded the title of Hero of the Soviet Union for his courage."
+  },
+  {
+    "id": "cardicon_meliton_kantaria",
+    "zh": "梅利通·瓦尔拉莫维奇·坎塔里亚",
+    "en": "Meliton Varlamovich Kantaria",
+    "desc": "A Red Army sergeant who participated in the World War II since December 1941. Together with sergeant Mikhail Yegorov, he placed the Red flag over the Reichstag during the Battle for Berlin. For his valor, he was awarded the highest awards: the Hero of the Soviet Union title, the Gold Star medal, and the Order of Lenin."
+  },
+  {
+    "id": "cardicon_metal_santa",
+    "zh": "金属圣诞老人",
+    "en": "Metalhead Santa",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_mikhail_egorov",
+    "zh": "米哈伊尔·阿列克谢耶维奇·叶戈罗夫",
+    "en": "Mikhail Alekseyevich Yegorov",
+    "desc": "Mikhail Yegorov was a Red Army sergeant that participated in the Battle for Berlin. He, along with Meliton Kantaria, raised the Soviet Flag over the Reichstag: first at the main entrance of the building, and later on its roof for the famous photo."
+  },
+  {
+    "id": "cardicon_mikhailova",
+    "zh": "叶卡捷琳娜·伊拉里奥诺芙娜·米哈伊洛娃",
+    "en": "Ekaterina Illarionovna Mikhailova",
+    "desc": "The start of the German invasion of the USSR found a 15-year-old Ekaterina Mikhailova near Smolensk, where she lied about her age and enlisted as a nurse into the local rifle unit. She went through the entirety of the war from February 1943 as a nurse instructor in a Marine battalion, where she repeatedly participated in dangerous landing operations. On December 4th, 1944, during the battle of the fortress of IIok, having been seriously injured and soaked in icy water, she saved drowning wounded soldiers and fought off advancing enemies. For this, she was presented with the title of Hero of the Soviet Union."
+  },
+  {
+    "id": "cardicon_motolady",
+    "zh": "摩托女骑",
+    "en": "MotoLady",
+    "desc": "Special profile icon for the \"\"Summer Extreme 2023\"\" event"
+  },
+  {
+    "id": "cardicon_nataliya_meklin",
+    "zh": "纳塔利娅·费奥多罗芙娜·梅克琳",
+    "en": "Natalya Fedorovna Meklin",
+    "desc": "Natalya Meklin enlisted in the 588th Bomber Regiment at her own request and was deployed to the front in the summer of 1942, when she was just 19 years old. She took part in the Tuapse Operation, carrying out bombing raids against enemy positions, supply routes, and crossings in the mountainous regions of the Western Caucasus. She continued flying combat missions until the end of the war, rising to the rank of flight commander and being awarded the title of Hero of the Soviet Union."
+  },
+  {
+    "id": "cardicon_neustroev",
+    "zh": "斯捷潘·涅乌斯特罗耶夫",
+    "en": "Stepan Neustroev",
+    "desc": "Stepan Andreevich Neustroev was a Soviet officer who commanded the 1st Rifle Battalion of the 756th Rifle Regiment in the 150th Rifle Division from 1943 in the Baltic, Vistula-Oder, East Pomeranian and Berlin operations. In Berlin, his regiment stormed the main entrance to the Reichstag — both Mikhail Yegorov and Meliton Kantaria, who raised the Soviet banner over the building, served under Neustroev. Neustroev was supposed to carry the Victory Banner at the parade on Red Square on June 24th, 1945, but was unable to do so due to a leg wound. Later, the Victory Banner was donated to a museum."
+  },
+  {
+    "id": "cardicon_newyear_23",
+    "zh": "冬日飞行员",
+    "en": "Winter pilot",
+    "desc": "Special profile icon for the \"\"Winter Quest 2022\"\" event"
+  },
+  {
+    "id": "cardicon_night_pilot",
+    "zh": "夜间猎手",
+    "en": "Night Hunter",
+    "desc": "Reward for participation in night battles."
+  },
+  {
+    "id": "cardicon_night_soldier",
+    "zh": "特种部队士兵",
+    "en": "Special Forces Soldier",
+    "desc": "Reward for participation in night battles."
+  },
+  {
+    "id": "cardicon_nikolai_gastello",
+    "zh": "尼古拉·弗兰采维奇·加斯特洛",
+    "en": "Nikolai Frantsevich Gastello",
+    "desc": "When Germany invaded the Soviet Union, Nikolai Gastello was already a squadron leader and an experienced pilot with 9 years of flight experience. Two days after the beginning of Operation Barbarossa, on June 24th, 1941, Gastello downed a Luftwaffe aircraft using just the turret of a DB-3f resting on an airfield. On June 26th, the aircraft piloted by Gastello was hit by flak in the fuel tank and caught fire; Gastello flew his flaming bomber into the enemy. He posthumously received the Hero of the Soviet Union title, and his valor became an example for other Soviet pilots."
+  },
+  {
+    "id": "cardicon_norman_schwarzkopf",
+    "zh": "诺曼·施瓦兹科夫",
+    "en": "Norman Schwarzkopf",
+    "desc": "An american general who commanded the American and European forces during the Gulf War. Under his leadership the coalition reached all its goals with minimal casualties: Kuwait was liberated and the Iraqi army was decimated. Upon returning home he led a victory parade in Washington DC — the biggest since World War II."
+  },
+  {
+    "id": "cardicon_option",
+    "zh": "百夫长副手",
+    "en": "Optio",
+    "desc": "Special profile icon for the \"\"Steel Centurion\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_paddy_mayne",
+    "zh": "帕迪·梅恩",
+    "en": "Paddy Mayne",
+    "desc": "Paddy Mayne was one of the founders of the British Special Air Service (SAS). In 1941-42, he and his men carried out sabotage on Axis airfields in North Africa, destroying over 100 aircraft. As a commander, he fought in the Sicilian campaign and later in France, the Netherlands, Belgium, Germany and Norway. He was awarded the Distinguished Service Order with three bars (awarded four times)."
+  },
+  {
+    "id": "cardicon_paratrooper",
+    "zh": "美国空降兵",
+    "en": "US Paratrooper",
+    "desc": "A special profile icon for the \"\"Airborne General\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_pilot_ovechkin",
+    "zh": "呼号：冰球手",
+    "en": "Call sign \"\"Hockey Player\"\"",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_poddubny",
+    "zh": "伊万·波杜布内",
+    "en": "Ivan Poddubny",
+    "desc": "Special profile icon for the \"\"Strength Athletics\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_pyotr_pilyutov",
+    "zh": "彼得·安德烈耶维奇·皮柳托夫",
+    "en": "Pyotr Andreevich Pilyutov",
+    "desc": "Pyotr Pilyutov was a Soviet ace who fought throughout World War 2. In total, he took part in 74 aerial battles and shot down 15 enemy aircraft. Pilyutov fought on the Leningrad Front, defending the besieged city. On February 10th, 1943, shortly after the breakthrough of the siege, Pilyutov was awarded the title of Hero of the Soviet Union. After the war, his name was immortalized in the museum-diorama \"\"Breakthrough of the Siege of Leningrad\"\"."
+  },
+  {
+    "id": "cardicon_raymond_dronne",
+    "zh": "雷蒙德·德罗纳",
+    "en": "Raymond Dronne",
+    "desc": "Raymond Dronne joined the ranks of the Free French Forces in 1940, and in 1944 he was captain under General Leclerc. In 1944, when the Allied forces were already moving towards Paris, their road was difficult because of enemy resistance and bad weather. Leclerc ordered Dronne to go to Paris and inform the Resistance that large reinforcements would arrive in 24 hours. This made Dronne become the first French officer to enter Paris during the liberation of the city."
+  },
+  {
+    "id": "cardicon_reginald_mitchell",
+    "zh": "雷金纳德·米切尔",
+    "en": "Reginald Mitchell",
+    "desc": "A British aircraft designer that created 24 aircraft, including the fastest seaplanes of the era: for his work on them he was awarded the CBE. When he was only 38, he led the development of the Supermarine Spitfire, which became a legend and a symbol of the Royal Air Force during World War II."
+  },
+  {
+    "id": "cardicon_richard_bong",
+    "zh": "理查德·邦格",
+    "en": "Richard Bong",
+    "desc": "Richard Bong was the most successful American ace of World War II, who shot down 40 enemy aircraft in his P-38 Lightning. Bong himself considered his accuracy to be poor, but he compensated for this with his audacity: he got as close to enemy aircraft as possible to make sure he hit them. He became a captain at the age of 22, a major at 23, and at 24 he was awarded the Medal of Honor for his heroism at the Battle of Leyte."
+  },
+  {
+    "id": "cardicon_richard_winters",
+    "zh": "理查德·温特斯",
+    "en": "Richard Winters",
+    "desc": "Richard Winters — one of the \"\"D-Day\"\" heroes. After landing in Normandy, he led his squad of 13 paratroopers against German artillery crews shelling Utah Beach. His team not only defeated the enemy forces in the battle at Brecourt Manor but also captured a map of other artillery batteries in the area. This operation is cited to this day as an example of a skillful tactical attack of a small formation on the enemy’s stationary positions."
+  },
+  {
+    "id": "cardicon_roosevelt",
+    "zh": "西奥多·罗斯福三世",
+    "en": "Theodore Roosevelt III",
+    "desc": "The son of U.S. President Theodore Roosevelt distinguished himself both in politics and at the front. He fought in both World Wars on the front lines, even becoming a Brigadier General. During the Normandy Landings, he personally led his troops and was one of the first to land on Utah Beach. At the age of 56, he was the oldest member of the D-Day landing party; however, due to heart problems and arthritis, he was forced to walk with a cane. Despite this, he carried out all of his tasks flawlessly and was awarded the Medal of Honor for his heroism."
+  },
+  {
+    "id": "cardicon_rosa_shanina",
+    "zh": "罗扎·叶戈罗芙娜·沙妮娜",
+    "en": "Roza Yegorovna Shanina",
+    "desc": "Roza Shanina was a student and a kindergarten teacher in Arkhangelsk, who enlisted as a volunteer. She graduated from sniper school with excellence and participated in battles from April of 1944. For her valour and great results she was awarded the Order of Glory 3rd class after just two weeks of fighting: she became the first servicewoman of the 3rd Belorussian Front to receive it. She participated in battles under Vitebsk and Vilnius, and in early September of 1944 hunted down German snipers on the East Prussia border. By that time her kill count was over 50, and on September 16th, 1944 she was awarded the Order of Glory 2nd class."
+  },
+  {
+    "id": "cardicon_royal_guardsman",
+    "zh": "皇家守卫",
+    "en": "Royal Guardsman",
+    "desc": "Special profile icon for the \"\"Royal Guard\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_sailor_ussr_02",
+    "zh": "",
+    "en": "",
+    "desc": "Special profile icon for \"\"Sea Voyage\"\" event"
+  },
+  {
+    "id": "cardicon_santa_claus",
+    "zh": "圣诞老人飞行员",
+    "en": "Pilot Santa Claus",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_sorokin",
+    "zh": "谢苗·叶戈罗维奇·索罗金",
+    "en": "Semyon Yegorovich Sorokin",
+    "desc": "In the final stage of the War in Europe, the hoisting of the red flag over the Reichstag became a matter of Soviet national prestige. However, the building was turned into a fortress, which was defended by hundreds of Germans. On April 30th, 1945, under the cover of artillery, a detachment led by Lieutenant Semyon Sorokin broke into the building, captured one of the exits from the basements where the Germans were hiding from shelling, and quickly made their way to the roof, where they were the first to hoist the Victory Banner. For his courage, Sorokin was awarded the title of Hero of the Soviet Union."
+  },
+  {
+    "id": "cardicon_steve_pisanos",
+    "zh": "史蒂夫·皮萨诺斯",
+    "en": "Steve Pisanos",
+    "desc": "A special profile icon for the \"\"Apollo’s Chariot\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_strikemaster_pilot",
+    "zh": "攻击霸主飞行员",
+    "en": "Strikemaster pilot",
+    "desc": "A special profile icon for the \"\"Tropical Storm\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_sw_famale",
+    "zh": "女武神",
+    "en": "Valkyrie",
+    "desc": "A special profile icon for the \"\"Northern King\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_swimmer",
+    "zh": "战斗蛙人",
+    "en": "Combat Swimmer",
+    "desc": "Special profile icon for the \"\"River Hunter\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_tanker_sw_modern_02",
+    "zh": "米诺陶车长",
+    "en": "Minotaur Commander",
+    "desc": "Minotaur tank commander from the \"\"Warfare 2077\"\" project"
+  },
+  {
+    "id": "cardicon_tanker_us_p",
+    "zh": "齐头并进",
+    "en": "Wingman",
+    "desc": "For completed operation between War Thunder and War Thunder Mobile!"
+  },
+  {
+    "id": "cardicon_test_driver",
+    "zh": "试车员",
+    "en": "Test driver",
+    "desc": "Special profile icon for the \"\"Field Testing\"\" Battle Pass Season"
+  },
+  {
+    "id": "cardicon_uboat_captain",
+    "zh": "U 艇艇长",
+    "en": "U-boat Commander",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_usagi",
+    "zh": "兔子车长",
+    "en": "Usagi",
+    "desc": "Senrai Maidens Fighter"
+  },
+  {
+    "id": "cardicon_william_shomo",
+    "zh": "威廉·亚瑟·肖莫",
+    "en": "William Arthur Shomo",
+    "desc": "William Arthur Shomo was an American reconnaissance pilot during the Battle of Luzon. On January 11th, 1945, during one of his flights, Shomo noticed a squadron of Japanese fighters escorting a bomber. Despite being outnumbered, he went on the attack and shot down seven enemy aircraft in six minutes (with his wingman hitting three more), becoming an \"\"Ace in a Day\"\". For this feat, he was promoted to major and received the Medal of Honor."
+  },
+  {
+    "id": "cardicon_wilson",
+    "zh": "J·S·威尔逊",
+    "en": "J.S. Wilson",
+    "desc": "Sergeant Wilson (J.S. Wilson) is drawing the silhouette of a woman on the fuselage of the PB4Y \"\"Liberator\"\" anti-submarine aircraft. Enewetak Atoll, Marshall Islands. 1944."
+  },
+  {
+    "id": "cardicon_winter_marathon_2024",
+    "zh": "滑雪少女",
+    "en": "Snowboarder",
+    "desc": "Special profile icon for the \"\"Winter Extreme 2023\"\" event"
+  },
+  {
+    "id": "cardicon_winter_marathon_2025",
+    "zh": "呼号“雪女”",
+    "en": "Call sign \"\"Snow Maiden\"\"",
+    "desc": ""
+  },
+  {
+    "id": "cardicon_woman_scout",
+    "zh": "童子军姑娘",
+    "en": "Girl scout",
+    "desc": "Special profile icon for the \"\"Summer Quest 2022\"\" event"
+  }
+]

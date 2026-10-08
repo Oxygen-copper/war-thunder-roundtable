@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>战雷圆桌工程</title>
+<link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">RT</div>
+    <h1>战雷圆桌工程</h1>
+  </div>
+  <nav class="crumbs" id="crumbs"></nav>
+  <div class="status">
+    <span class="chip" id="chipGame">游戏路径</span>
+    <span class="chip" id="chipTools">工具</span>
+    <button class="btn ghost" id="btnRefresh">刷新</button>
+    <button class="btn ghost" id="btnSettings">设置</button>
+    <button class="btn notice-btn" id="btnNotice">声明</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 首页 ============ -->
+<section class="view active" id="v-home">
+  <div class="homes">
+    <button class="homecard" data-go="voice" data-gate="voice">
+      <div class="hc-top"><span class="hc-icon">🎧</span><span class="hc-tag">工作流</span></div>
+      <h2>语音包工程</h2>
+      <p>下载原版乘员语音 → 换声 / 造声 → 无线电效果 → 打包安装<br/>
+         <span class="muted">陆战 · 海战 · 空战告警 · 通用播报</span></p>
+      <span class="hc-go">进入 →</span>
+    </button>
+    <button class="homecard" data-go="avatar">
+      <div class="hc-top"><span class="hc-icon">🖼️</span><span class="hc-tag">素材</span></div>
+      <h2>战雷头像提取</h2>
+      <p>从你自己的游戏里解包全部头像 / 头像框 / 资料页头图<br/>
+         <span class="muted">带中文名、缩略图，可直接拿去做 Steam 头像</span></p>
+      <span class="hc-go" id="avatarCount">进入 →</span>
+    </button>
+  </div>
+  <p class="homefoot muted tiny">本工具只读取你本机的游戏文件，不上传、不联网、不改动游戏本体。</p>
+</section>
+
+<!-- ============ 头像 ============ -->
+<section class="view" id="v-avatar">
+  <div class="toolbar">
+    <button class="btn primary" id="btnExtractAvatars">从游戏里提取全部头像</button>
+    <button class="btn" id="btnOpenAvatarDir">打开头像文件夹</button>
+    <span class="hint" id="avatarHint"></span>
+  </div>
+  <div class="avatarwrap">
+    <div class="subtabs" id="avatarTabs"></div>
+    <div id="avatarGrid" class="avgrid"></div>
+    <div id="avatarEmpty" class="empty" hidden>
+      <p>还没有提取过头像。</p>
+      <p class="muted">点上面的「从游戏里提取全部头像」，会从你本机的《战争雷霆》里解包约 430 张图。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 语音包工程 ============ -->
+<section class="view" id="v-voice">
+  <div class="tabs">
+    <button class="tab active" data-tab="get">① 下载乘员组语音</button>
+    <button class="tab" data-tab="conv">② SDV换声 / TTS造声</button>
+    <button class="tab" data-tab="build">③ 安装 / 打包</button>
+    <button class="btn blue tiny tabhelp" id="btnGuide">点这里看新手指引</button>
+  </div>
+
+  <div class="tabbody">
+
+    <!-- ① 下载 -->
+    <div class="pane active" id="p-get">
+      <div class="subtabs">
+        <button class="subtab active" data-cat="ground">陆战乘员组</button>
+        <button class="subtab" data-cat="naval">海战乘员组</button>
+        <button class="subtab" data-cat="air">空战告警语音</button>
+        <button class="subtab" data-cat="common">通用战场播报</button>
+      </div>
+      <div class="filterbar">
+        <span class="muted">范围</span>
+        <label class="seg"><input type="checkbox" id="onlyMain" checked/><span>只看八大系</span></label>
+        <span class="muted tiny" id="catHint"></span>
+      </div>
+      <div id="srcGrid" class="langgrid"></div>
+    </div>
+
+    <!-- ② 换声 / 造声 -->
+    <div class="pane" id="p-conv">
+      <div class="switch2">
+        <button class="sw active" data-conv="sdv">
+          <b>SDV 换声</b><small>把已经有的人声换成目标音色</small>
+        </button>
+        <button class="sw" data-conv="tts">
+          <b>TTS 造声</b><small>从文字直接生成语音</small>
+        </button>
+      </div>
+
+      <!-- SDV -->
+      <div class="convpane active" id="c-sdv">
+        <div class="lead">
+          <h2>SDV · SeedVC 换声</h2>
+          <p>把<b>已经有的人声</b>换成目标音色。输出保留原本的语气和节奏，只换声线 —— 做整套乘员包的主力。</p>
+        </div>
+        <div class="form">
+          <div class="field"><label>源音频文件夹</label>
+            <div class="pathrow"><input id="sdvSrc"/><button class="btn tiny" data-browse="sdvSrc">选…</button></div></div>
+          <div class="field"><label>参考音色（5~15 秒 wav）</label>
+            <div class="pathrow"><input id="sdvRef"/><button class="btn tiny" data-browse="sdvRef" data-mode="file">选…</button></div></div>
+          <div class="field"><label>输出文件夹</label>
+            <div class="pathrow"><input id="sdvDst"/><button class="btn tiny" data-browse="sdvDst">选…</button></div></div>
+
+          <div class="field">
+            <label>迭代步数 <span class="val" id="sdvStepsVal">30</span></label>
+            <input type="range" id="sdvSteps" min="30" max="100" step="1" value="30"/>
+            <p class="hintline">替换声音时每一个项迭代的步数，越高质量越好，代价是相对下降的速度和占用运存的上升。</p>
+          </div>
+
+          <div class="field">
+            <label>输出音调 <span class="val" id="sdvPitchVal">0 半音</span></label>
+            <input type="range" id="sdvPitch" min="-12" max="12" step="1" value="0"/>
+            <p class="hintline">正数调高、负数调低，单位是半音（±12 = 一个八度）。用来把成品整体调亮或调沉。</p>
+          </div>
+
+          <div class="row">
+            <label class="seg">启用 F0
+              <span class="qm" data-tip="F0 就是基频，也就是音高曲线。&#10;开启：转换会跟着源音频的音高走 —— 唱歌、翻唱、带起伏的台词必须开，否则会跑调。&#10;关闭：完全按参考音色的音高来说，语气会平一些，但速度更快、显存更省。&#10;做语音包批量换声时，一般保持开启。">?</span>
+              <input type="checkbox" id="sdvF0" checked/>
+            </label>
+            <button class="btn primary" id="sdvGo">开始批量转换</button>
+          </div>
+          <p class="tiny muted">约 2.7 秒/条（RTX 5060）；中断后重跑会自动接着来。</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="lead">
+          <h2>附加 · 无线电效果</h2>
+          <p>换完声之后，顺手把音质做成<b>旧式电台听感</b>（带通 + 中频凸起 + 软削波 + 数码量化 + 带内底噪 + 静噪咔哒）。约 16 条/秒，纯本地 DSP。</p>
+        </div>
+        <div class="form">
+          <div class="field"><label>源音频文件夹</label>
+            <div class="pathrow"><input id="fxSrc"/><button class="btn tiny" data-browse="fxSrc">选…</button></div></div>
+          <div class="field"><label>输出文件夹</label>
+            <div class="pathrow"><input id="fxDst"/><button class="btn tiny" data-browse="fxDst">选…</button></div></div>
+          <div class="row">
+            <label>预设 <select id="fxPreset" class="mini">
+              <option value="1">1 · 战雷旧语音包风格（推荐）</option>
+              <option value="2">2 · 军用无线电（更闷更脏）</option>
+              <option value="3">3 · 现代数字电台（偏干净）</option>
+              <option value="4">4 · 轻微（只加一点味道）</option>
+            </select></label>
+            <button class="btn primary" id="fxGo">开始批量处理</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TTS -->
+      <div class="convpane" id="c-tts">
+        <div class="lead">
+          <h2>TTS · IndexTTS2 造声</h2>
+          <p>从文字直接生成语音。手里<b>没有现成素材</b>、需要补游戏里没收录的台词时用它。</p>
+        </div>
+        <div class="notice">
+          <b>SDV 和 TTS 怎么选？</b><br/>
+          <b>SDV（换声）</b>：必须有人声素材，音色和语气都自然，适合大批量。<br/>
+          <b>TTS（造声）</b>：只要给文字就行，能补游戏里根本不存在的内容，但语气和停顿要自己调，适合短句。<br/>
+          一般做法：<b>SDV 打底 + TTS 补缺口</b>。
+        </div>
+        <div class="form">
+          <div class="modeswitch">
+            <button class="ms active" data-mode="manual">手动输入</button>
+            <button class="ms" data-mode="file">读取 TXT</button>
+          </div>
+
+          <div id="ttsManual">
+            <div class="field"><label>要说的内容（一行一条，每行生成一个文件）</label>
+              <textarea id="ttsText" rows="7" placeholder="Driver, move out!&#10;Target destroyed!"></textarea></div>
+          </div>
+
+          <div id="ttsFile" hidden>
+            <div class="field"><label>稿子文件</label>
+              <div class="row">
+                <button class="btn" id="ttsPickTxt">选择 TXT 文件…</button>
+                <span class="muted tiny" id="ttsFileName">还没选</span>
+              </div>
+              <p class="hintline">格式：每句以 <code>WT</code> + 四位数字开头，例如
+                <code>WT0001-Driver, move out! WT0002-Target destroyed!</code><br/>
+                <b>WT#### 是唯一的分割点</b> —— 换行和其他空格都算同一句里的一部分。
+                生成的文件名就是 <code>WT0001.wav</code> 这样。</p>
+            </div>
+            <div class="field"><label>解析预览 <span class="val" id="ttsCount">0 条</span></label>
+              <div id="ttsPreview" class="preview"></div></div>
+            <input type="file" id="ttsTxt" accept=".txt,text/plain" hidden/>
+          </div>
+
+          <div class="field"><label>参考音色</label>
+            <div class="pathrow"><input id="ttsRef"/><button class="btn tiny" data-browse="ttsRef" data-mode="file">选…</button></div></div>
+          <div class="field"><label>情绪参考（可选）</label>
+            <div class="pathrow"><input id="ttsEmo"/><button class="btn tiny" data-browse="ttsEmo" data-mode="file">选…</button></div></div>
+          <div class="field"><label>输出文件夹</label>
+            <div class="pathrow"><input id="ttsDst"/><button class="btn tiny" data-browse="ttsDst">选…</button></div></div>
+
+          <div class="field">
+            <label>输出音调 <span class="val" id="ttsPitchVal">0 半音</span></label>
+            <input type="range" id="ttsPitch" min="-12" max="12" step="1" value="0"/>
+            <p class="hintline">生成完之后逐条移调（时长不变）。正数调高、负数调低。</p>
+          </div>
+
+          <div class="row">
+            <label>语言 <select id="ttsLang" class="mini">
+              <option value="EN">EN</option><option value="CN">CN</option><option value="JA">JA</option></select></label>
+            <button class="btn primary" id="ttsGo">开始生成</button>
+          </div>
+          <p class="tiny muted">整批只加载一次模型，所以条数越多越划算。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ 打包安装 -->
+    <div class="pane" id="p-build">
+      <div class="lead">
+        <h2>打包 / 安装</h2>
+        <p>两条路：<b>自己的音频素材</b>交给它，自动归位、构建 bank，做完问你要不要顺手装进游戏；<b>别人打好的 zip</b> 直接上传装。</p>
+      </div>
+      <div class="branchbox">
+        <h4>① 从我的音频素材打包</h4>
+        <p class="sub">里面放 <code>wav</code> / <code>mp3</code>。文件夹叫中文、分类混在一起、多套语言堆在一个目录里，都能认。
+          构建完会问你要不要顺手装进游戏。</p>
+        <div class="pathrow"><input id="fmodSrc"/><button class="btn tiny" data-browse="fmodSrc">选…</button></div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="scanGo" data-tip="按官方工程比对每条音频该放的位置，先给你一份「能对上多少条、认不出哪些」的清单，并推测你要替换哪个槽位。这一步不会改动任何文件。">分析一下</button>
+          <button class="btn tiny ghost" id="btnOpenFmod" data-tip="在资源管理器里打开那个 .fspro 工程所在的目录。构建卡住、或者想在 FMOD 图形界面里手动 Build 时，从这里进。">打开 FMOD 工程</button>
+        </div>
+        <div id="scanOut"></div>
+      </div>
+      <div class="branchbox">
+        <h4>② 装别人打好的 zip</h4>
+        <p class="sub">别人发你一个打包好的语音包 zip 时用它。不用解压 —— 工具自己解开、找到里面的 bank，
+          装进 <code>游戏\sound\mod</code>，重启游戏生效。装之前会自动备份被覆盖的文件。</p>
+        <div class="row">
+          <button class="btn primary" id="btnPickPackZip" data-tip="选一个打包好的语音包 zip。工具会自己解开、找到里面的 bank 并装好，不用你先动手解压。">上传 zip 安装</button>
+          <input type="file" id="packZip" accept=".zip" hidden/>
+        </div>
+      </div>
+      <div class="row modhead">
+        <h4 style="margin:0">已经安装的语音包</h4>
+        <button class="btn tiny" id="btnOpenModDir" data-tip="在资源管理器里打开 游戏\sound\mod。这里放的才是游戏真正会加载的语音包，名字里的语言代号决定它顶掉哪国车组。">前往文件夹</button>
+      </div>
+      <div id="modList" class="modlist"></div>
+      <div class="row"><button class="btn danger" id="btnCleanMod">清空 sound\mod</button></div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="console" id="console">
+  <div class="loghead">
+    <span id="jobTitle">运行记录</span>
+    <div>
+      <span class="jobstate" id="jobState"></span>
+      <button class="btn tiny" id="logClear">清空</button>
+      <button class="btn tiny" id="logToggle">收起</button>
+    </div>
+  </div>
+  <pre id="log"></pre>
+</footer>
+
+<div class="tip" id="tip"></div>
+<div class="dropzone" id="dropOverlay"><div>松手即导入</div></div>
+<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+<div class="toasts" id="toasts"></div>
+<input type="file" id="skinFolderPicker" webkitdirectory directory multiple hidden/>
+
+<script src="/app.js"></script>
+</body>
+</html>

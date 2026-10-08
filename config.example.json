@@ -1,0 +1,25 @@
+{
+  "_说明": "把这个文件复制成 config.json 再改。工具第一次启动会自动探测游戏目录和 GIMP；探测不到才需要手填。",
+
+  "game_root": "D:\\steam\\steamapps\\common\\War Thunder",
+
+  "_sdv_root": "SeedVC 所在目录（换声用）。可以留空，工具会在「扩展\\SDV」里找，或者你在界面右上角「设置」里指。",
+  "sdv_root": "D:\\AI\\Sovites ai\\SDV",
+
+  "_tts_root": "IndexTTS2 所在目录（造声用）。同上，可以留空。",
+  "tts_root": "D:\\AI\\TTS-Tools",
+
+  "_uvr_root": "Ultimate Vocal Remover（可选，剥伴奏用）。不留也行。",
+  "uvr_root": "D:\\AI\\Sovites ai\\Ultimate Vocal Remover",
+
+  "_fmod_kit": "战雷官方模组工具包（含 .fspro 工程）。打包成 .bank 要用，工程会自己调里面的 FMOD 命令行。",
+  "fmod_kit": "D:\\战雷语音包\\fmod_studio_warthunder_for_modders-master",
+
+  "_voice_assets": "参考音色之类的素材目录，可以留空。",
+  "voice_assets": "D:\\AI\\character Voice",
+
+  "_gimp": "GIMP 可执行文件路径，一般自动能探测到。",
+  "gimp": "",
+
+  "port": 8788
+}
