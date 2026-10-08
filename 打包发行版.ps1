@@ -43,6 +43,11 @@ Set-Content -LiteralPath (Join-Path $dst '扩展\把SDV和TTS解压到这里.txt
 "@
 
 # 清掉不该进包的
+# 涂装功能已下线，这几个是作者自留的本地工具，不进发行包
+foreach ($f in 'GIMP-启动.bat', '转换DDS-拖文件夹.bat', 'check_skin_compat.py', '载具通用性知识库.json') {
+    $p = Join-Path $dst ('核心\' + $f)
+    if (Test-Path -LiteralPath $p) { Remove-Item -LiteralPath $p -Force }
+}
 Get-ChildItem -LiteralPath $dst -Recurse -Force -ErrorAction SilentlyContinue |
     Where-Object { $_.Name -in '__pycache__', '.DS_Store' -or $_.Extension -in '.pyc', '.log' } |
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue

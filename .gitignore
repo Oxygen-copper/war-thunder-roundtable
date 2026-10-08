@@ -8,9 +8,15 @@
 头像/avatars/
 头像/avatar_frames/
 头像/profile_headers/
-涂装/涂装库/
-涂装/色板/
+涂装/
 _cache/
+
+# ── 涂装功能已从工程移除，这些是留给作者自己用的本地工具 ──────
+核心/GIMP-启动.bat
+核心/转换DDS-拖文件夹.bat
+核心/check_skin_compat.py
+核心/载具通用性知识库.json
+演示稿-圆桌工程.md
 
 # ── 本机配置与运行产物 ──────────────────────────────────────
 config.json
