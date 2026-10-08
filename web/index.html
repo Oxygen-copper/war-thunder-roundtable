@@ -108,8 +108,9 @@
           <p>把<b>已经有的人声</b>换成目标音色。输出保留原本的语气和节奏，只换声线 —— 做整套乘员包的主力。</p>
         </div>
         <div class="form">
-          <div class="field"><label>源音频文件夹</label>
-            <div class="pathrow"><input id="sdvSrc"/><button class="btn tiny" data-browse="sdvSrc">选…</button></div></div>
+          <div class="field"><label>源音频（文件夹，或者单个文件）</label>
+            <div class="pathrow"><input id="sdvSrc"/><button class="btn tiny" data-browse="sdvSrc">选…</button></div>
+            <p class="hintline">给文件夹就整批转；只想试听一条，直接把那个音频的路径粘进来也行。</p></div>
           <div class="field"><label>参考音色（5~15 秒 wav）</label>
             <div class="pathrow"><input id="sdvRef"/><button class="btn tiny" data-browse="sdvRef" data-mode="file">选…</button></div></div>
           <div class="field"><label>输出文件夹</label>
@@ -144,7 +145,7 @@
           <p>换完声之后，顺手把音质做成<b>旧式电台听感</b>（带通 + 中频凸起 + 软削波 + 数码量化 + 带内底噪 + 静噪咔哒）。约 16 条/秒，纯本地 DSP。</p>
         </div>
         <div class="form">
-          <div class="field"><label>源音频文件夹</label>
+          <div class="field"><label>源音频（文件夹，或者单个文件）</label>
             <div class="pathrow"><input id="fxSrc"/><button class="btn tiny" data-browse="fxSrc">选…</button></div></div>
           <div class="field"><label>输出文件夹</label>
             <div class="pathrow"><input id="fxDst"/><button class="btn tiny" data-browse="fxDst">选…</button></div></div>

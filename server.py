@@ -1127,7 +1127,9 @@ def job_sdv(job, cfg, src, dst, ref, steps, f0, pitch=0, limit=0):
         raise RuntimeError('参考音频不存在：' + ref)
     os.makedirs(dst, exist_ok=True)
     cmd = [py, script, '--reference', ref, '--input', src, '--output', dst,
-           '--diffusion-steps', str(steps), '--recursive', '--overwrite']
+           '--diffusion-steps', str(steps), '--overwrite']
+    if os.path.isdir(src):
+        cmd.append('--recursive')       # 源是单个文件时不需要，batch_svc 自己会忽略
     if not f0:
         cmd.append('--no-f0')
     if int(pitch or 0):
@@ -1150,8 +1152,11 @@ def job_radio(job, cfg, src, dst, preset):
     if not os.path.isfile(py) or not os.path.isfile(script):
         raise RuntimeError('找不到 radio_fx.py')
     os.makedirs(dst, exist_ok=True)
-    run_stream(job, [py, script, '--input', src, '--output', dst,
-                     '--preset', str(preset), '--recursive', '--overwrite'],
+    cmd = [py, script, '--input', src, '--output', dst,
+           '--preset', str(preset), '--overwrite']
+    if os.path.isdir(src):
+        cmd.append('--recursive')
+    run_stream(job, cmd,
                cwd=os.path.dirname(script),
                env_extra={'PATH': os.path.join(cfg.get('sdv_root') or '', 'ffmpeg') + os.pathsep + os.environ.get('PATH', '')})
     jlog(job, '完成：%d 个音频 → %s' % (len(collect_files(dst, AUDIO_EXT)), dst))

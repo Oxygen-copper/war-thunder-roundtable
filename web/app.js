@@ -146,7 +146,11 @@ function openBrowser(targetId, mode) {
     d.files.forEach(f => rows.push(`<div class="brow" data-file="${esc(d.path + '\\' + f.name)}"><span>♪ ${esc(f.name)}</span><span class="muted">${f.mb} MB</span></div>`));
     $('modalBox').innerHTML = `
       <h3>${mode === 'file' ? '选一个文件' : '选一个文件夹'}</h3>
-      <p class="sub">${mode === 'file' ? '点文件选中；也可以点进文件夹里找。' : '进到目标文件夹，再点「用这个文件夹」。'}</p>
+      <p class="sub">${mode === 'file'
+        ? '点文件选中；也可以点进文件夹里找。'
+        : (targetId === 'sdvSrc' || targetId === 'fxSrc'
+          ? '进到目标文件夹，点「用这个文件夹」整批处理；只想试一条，就直接点下面那个文件。'
+          : '进到目标文件夹，再点「用这个文件夹」。')}</p>
       <div class="shortcuts">${d.shortcuts.map(s => `<button class="btn tiny" data-nav="${esc(s[1])}">${esc(s[0])}</button>`).join('')}</div>
       <div class="browsebar"><input id="bPath" value="${esc(d.path)}"/><button class="btn tiny" id="bGo">前往</button></div>
       <div class="browse">${rows.join('') || '<div class="muted" style="padding:8px">（空）</div>'}</div>
