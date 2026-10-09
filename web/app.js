@@ -1,7 +1,6 @@
 'use strict';
 
 let S = null;
-let curVehicle = null;
 let view = 'home', vtab = 'get', vcat = 'ground', convMode = 'sdv', ttsMode = 'manual';
 let onlyMain = true, ttsEntries = [];
 let pollTimer = null, logCursor = 0, curJob = null;
@@ -328,182 +327,6 @@ function renderTtsPreview() {
   $('ttsPreview').innerHTML = rows + more;
 }
 
-/* ------------------------------------------------ 涂装 */
-
-function repImage(s) {
-  if (!s.images.length) return null;
-  return s.images.find(f => /body/i.test(f)) || s.images.find(f => /turret/i.test(f)) || s.images[0];
-}
-const thumbUrl = (v, s, f, t) =>
-  `/api/skin/thumb?v=${encodeURIComponent(v)}&s=${encodeURIComponent(s)}&f=${encodeURIComponent(f)}&t=${t || 0}`;
-
-function renderSkin() {
-  if (!$('vehicles')) return;   // 涂装工程已从产品里移除，留个空实现兜住旧调用
-  const st = S.skin, byVeh = {};
-  st.skins.forEach(s => (byVeh[s.vehicle] = byVeh[s.vehicle] || []).push(s));
-  const vehicles = Object.keys(byVeh).sort();
-  if (!curVehicle || !vehicles.includes(curVehicle)) curVehicle = vehicles[0] || null;
-  $('vehicles').innerHTML = vehicles.length
-    ? vehicles.map(v => {
-        const l = byVeh[v];
-        const n = st.vehicleNames[v] || {};
-        const title = n.zh || n.en || v;
-        return `<button class="veh${v === curVehicle ? ' active' : ''}" data-v="${esc(v)}" title="${esc(v)}">
-        ${esc(title)}
-        <small>${l.length} 套 · 已装 ${l.filter(x => x.installed).length}${n.zh ? ' · ' + esc(v) : ''}</small></button>`;
-      }).join('')
-    : '<p class="muted" style="padding:8px 12px">库存为空</p>';
-  $$('#vehicles .veh').forEach(b => b.onclick = () => { curVehicle = b.dataset.v; renderSkin(); });
-  const list = curVehicle ? byVeh[curVehicle] : [];
-  $('vehTitle').textContent = curVehicle || '涂装';
-  $('vehMeta').textContent = list.length ? `${list.length} 套` : '';
-  $('emptySkin').hidden = list.length > 0;
-  $('skins').innerHTML = list.map(s => {
-    const rep = repImage(s);
-    const img = rep
-      ? `<img src="${thumbUrl(s.vehicle, s.name, rep, s.mtime)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'noimg',textContent:'预览失败'}))"/>`
-      : `<div class="noimg">没有图片</div>`;
-    const fresh = s.installed && !s.dirty;
-    const badge = s.installed ? (s.dirty ? '有改动未安装' : '已装进游戏') : '未安装';
-    return `<div class="card" data-v="${esc(s.vehicle)}" data-n="${esc(s.name)}">
-      <div class="thumb">${img}<span class="badge${fresh ? '' : (s.dirty ? ' dirty' : ' off')}">${badge}</span></div>
-      <div class="cardbody">
-        <div class="cardtitle">${esc(s.name)}</div>
-        <div class="cardmeta"><span>${s.files.length} 个文件</span><span>${s.sizeKB} KB</span><span>${s.images.length} 张图</span></div>
-        ${s.blkCount === 1 ? '' : `<div class="warnline">⚠ .blk 数量是 ${s.blkCount}，正常应为 1</div>`}
-        ${s.dirty ? '<div class="warnline">⚠ 库里改过了，游戏里还是旧版 —— 装一次才生效</div>' : ''}
-        <div class="actions">
-          <button class="btn${s.dirty ? ' primary' : ''}" data-act="install">${s.installed ? '重新装进游戏' : '装进游戏'}</button>
-          <button class="btn" data-act="edit">用 GIMP 打开</button>
-          <button class="btn" data-act="dds">转 DDS</button>
-          <button class="btn" data-act="blk">看 .blk</button>
-          <button class="btn" data-act="folder">文件夹</button>
-          <button class="btn" data-act="rename">改名</button>
-          <button class="btn danger" data-act="delete">删除</button>
-        </div>
-      </div></div>`;
-  }).join('');
-  $$('#skins .card').forEach(card => {
-    const v = card.dataset.v, n = card.dataset.n;
-    const skin = S.skin.skins.find(x => x.vehicle === v && x.name === n);
-    card.querySelectorAll('[data-act]').forEach(b => b.onclick = () => skinAction(b.dataset.act, skin));
-  });
-}
-
-async function skinAction(act, s) {
-  if (!s) return;
-  const call = async (url, p) => {
-    const r = await post(url, p);
-    if (!r.ok) { log('✗ ' + r.error, 'err'); return r; }
-    if (r.message) log('✓ ' + r.message);
-    await refresh(); return r;
-  };
-  if (act === 'install') {
-    const r = await call('/api/skin/install', { vehicle: s.vehicle, name: s.name });
-    if (r && r.needConfirm && confirm(r.message))
-      await call('/api/skin/install', { vehicle: s.vehicle, name: s.name, overwrite: true });
-  } else if (act === 'edit') await call('/api/skin/edit', { vehicle: s.vehicle, name: s.name });
-  else if (act === 'dds') await call('/api/skin/convert', { vehicle: s.vehicle, name: s.name });
-  else if (act === 'folder') await call('/api/open', { target: 'library' });
-  else if (act === 'blk') {
-    const r = await get(`/api/skin/blk?v=${encodeURIComponent(s.vehicle)}&s=${encodeURIComponent(s.name)}`);
-    const txt = (r.ok && r.blocks.length) ? r.blocks.map(b => '==== ' + b[0] + ' ====\n' + b[1]).join('\n') : '（没有 .blk）';
-    openModal(`<h3>${esc(s.name)} 的 .blk</h3><p class="sub">游戏靠它认出这是哪台车</p>
-      <pre class="out">${esc(txt)}</pre><div class="foot"><button class="btn" data-close>关闭</button></div>`);
-  } else if (act === 'rename') {
-    openModal(`<h3>改名</h3><p class="sub">这个名字就是游戏迷彩列表里显示的内容</p>
-      <div class="field"><label>新名字</label><input id="rn" value="${esc(s.name)}"/></div>
-      <div class="foot"><button class="btn" data-close>取消</button><button class="btn primary" id="rnGo">确定</button></div>`,
-      box => box.querySelector('#rnGo').onclick = async () => {
-        const v = box.querySelector('#rn').value; closeModal();
-        await call('/api/skin/rename', { vehicle: s.vehicle, name: s.name, newName: v });
-      });
-  } else if (act === 'delete') {
-    if (confirm(`从涂装库删除「${s.name}」？（游戏里那份不受影响）`))
-      await call('/api/skin/delete', { vehicle: s.vehicle, name: s.name });
-  }
-}
-
-/* ------------------------------------------------ 跨载具通用性检查 */
-
-const PART_CN = { body: '车体', turret: '炮塔', gun: '炮管', camo: '迷彩' };
-
-function renderCheck(r) {
-  const t = r.textures || {};
-  const row = (label, v) => v ? `<div class="ck-tx"><span>${label}</span><code>${esc(v)}</code></div>` : '';
-  let h = `<div class="ck-sec"><h4>① 识别结果</h4>
-    <div class="ck-name">${esc(r.vehicleLabel || '（units.csv 里没找到这台车的中文名）')}</div>
-    <div class="ck-tx"><span>载具 ID</span><code>${esc(r.vehicle)}</code></div>
-    ${row('车体纹理', t.body)}${row('炮塔纹理', t.turret)}${row('炮管纹理', t.gun)}${row('迷彩纹理', t.camo)}
-    ${r.family ? `<div class="ck-tx"><span>车族</span><span class="muted">${esc(r.family)}（知识库里有 ${r.familyTotal} 台）</span></div>` : ''}
-  </div>`;
-
-  h += `<div class="ck-sec"><h4>② 纹理完全一致 · 可以整包直接复制</h4>`;
-  h += r.same.length
-    ? r.same.map(x => `<div class="ck-row ok"><b>${esc(x.label)}</b><small>${esc(x.id)}</small></div>`).join('')
-    : '<div class="ck-none">知识库里暂时没有纹理完全一致的其它载具。</div>';
-  h += `</div>`;
-
-  h += `<div class="ck-sec"><h4>③ 同族但纹理不同 · 需要单独画</h4>`;
-  h += r.partial.length
-    ? r.partial.map(x => {
-        const diff = Object.keys(PART_CN).filter(p => !x.parts[p]).map(p => PART_CN[p]).join(' / ');
-        return `<div class="ck-row warn"><b>${esc(x.label)}</b>
-          <small>${esc(x.id)} · 不同部分：${esc(diff)}${x.parts.body ? '' : '（车体都不同，等于另一台车）'}</small></div>`;
-      }).join('')
-    : '<div class="ck-none">没有。</div>';
-  h += `</div>`;
-
-  h += `<div class="ck-sec"><h4>④ 同族但映射未收录 · 暂时判断不了</h4>`;
-  h += r.unknown.length
-    ? r.unknown.map(x => `<div class="ck-row unk"><b>${esc(x.label)}</b><small>${esc(x.id)}</small></div>`).join('')
-      + `<div class="ck-tip">想让它们也纳入判断：在游戏里对该车点一次「创建涂装范本」，回来点上面的「重新扫描知识库」即可。</div>`
-    : '<div class="ck-none">没有。</div>';
-  h += `</div>`;
-  return h;
-}
-
-async function runCheck(box) {
-  const i = +box.querySelector('#ckSkin').value;
-  const s = S.skin.skins[i];
-  const out = box.querySelector('#ckOut');
-  out.innerHTML = '<div class="muted tiny" style="padding:10px">正在检查…</div>';
-  const r = await post('/api/skin/check', { vehicle: s.vehicle, name: s.name });
-  if (!r.ok) { out.innerHTML = `<div class="warnline" style="padding:10px">检查失败：${esc(r.error)}</div>`; return; }
-  out.innerHTML = renderCheck(r);
-}
-
-function openCompat() {
-  if (!S.skin.skins.length) return toast('涂装库是空的，先去画一套', 'warn');
-  const opts = S.skin.skins.map((s, i) => {
-    const vn = (S.skin.vehicleNames[s.vehicle] || {}).zh || s.vehicle;
-    return `<option value="${i}">${esc(vn)} — ${esc(s.name)}</option>`;
-  }).join('');
-  const kb = S.skin.kb || {};
-  const kbTxt = `知识库：已收录 <b>${kb.count || 0}</b> 台载具的纹理映射 · ${kb.families || 0} 个车族 · 更新于 ${esc(kb.updated || '尚未生成')}`;
-  openModal(`
-    <h3>跨载具通用性检查</h3>
-    <p class="sub">选一套已经导入工程的涂装 → 自动识别它属于哪台车 → 对照知识库判断能不能直接搬到别的车上。</p>
-    <div class="field"><label>选择涂装</label><select id="ckSkin">${opts}</select></div>
-    <div class="ck-kb"><span id="ckKbTxt">${kbTxt}</span>
-      <button class="btn tiny" id="ckScan">重新扫描知识库</button></div>
-    <div id="ckOut" class="ck-out"></div>
-    <div class="foot"><button class="btn" data-close>关闭</button></div>`,
-    box => {
-      box.querySelector('#ckSkin').onchange = () => runCheck(box);
-      box.querySelector('#ckScan').onclick = async () => {
-        const r = await post('/api/skin/kb-scan', {});
-        r.ok ? log('✓ ' + r.message) : log('✗ ' + r.error, 'err');
-        await refresh();
-        const k = S.skin.kb || {};
-        box.querySelector('#ckKbTxt').innerHTML =
-          `知识库：已收录 <b>${k.count || 0}</b> 台载具的纹理映射 · ${k.families || 0} 个车族 · 更新于 ${esc(k.updated || '尚未生成')}`;
-        runCheck(box);
-      };
-      runCheck(box);
-    });
-}
-
 /* ------------------------------------------------ 刷新 / 设置 */
 
 async function refresh() {
@@ -524,7 +347,7 @@ async function refresh() {
     if (!$('ttsRef').value) $('ttsRef').value = V.refRoot;
     if (!$('ttsDst').value) $('ttsDst').value = V.projRoot;
     if (!$('fxDst').value) $('fxDst').value = V.packRoot;
-    renderSkin(); renderSources(); renderMods(); crumbs();
+    renderSources(); renderMods(); crumbs();
     renderAvatars();
   } catch (e) { toast('读取状态失败：' + e.message, 'err'); }
 }
@@ -533,8 +356,7 @@ function openSettings() {
   const c = S ? S.config : {};
   const f = (id, label, key) => `<div class="field"><label>${label}</label><input id="${id}" value="${esc(c[key] || '')}"/></div>`;
   openModal(`<h3>设置</h3><p class="sub">换电脑或给别人用时，把这几个路径填对就行</p>
-    ${f('cfgGame', '游戏根目录（里面有 sound 和 UserSkins）', 'game_root')}
-    ${f('cfgGimp', 'GIMP 可执行文件', 'gimp')}
+    ${f('cfgGame', '游戏根目录（里面有 sound 目录）', 'game_root')}
     ${f('cfgSdv', 'SeedVC 目录', 'sdv_root')}
     ${f('cfgTts', 'IndexTTS2 目录', 'tts_root')}
     ${f('cfgUvr', 'UVR5 目录', 'uvr_root')}
@@ -543,7 +365,7 @@ function openSettings() {
     <div class="foot"><button class="btn" data-close>取消</button><button class="btn primary" id="cfgGo">保存</button></div>`,
     box => box.querySelector('#cfgGo').onclick = async () => {
       const p = {
-        game_root: box.querySelector('#cfgGame').value, gimp: box.querySelector('#cfgGimp').value,
+        game_root: box.querySelector('#cfgGame').value,
         sdv_root: box.querySelector('#cfgSdv').value, tts_root: box.querySelector('#cfgTts').value,
         uvr_root: box.querySelector('#cfgUvr').value, fmod_kit: box.querySelector('#cfgFmod').value,
       };
@@ -555,28 +377,6 @@ function openSettings() {
 }
 
 /* ------------------------------------------------ 导入 */
-
-async function importSkinFiles(files) {
-  files = Array.from(files);
-  if (!files.length) return;
-  if (files.length === 1 && /\.zip$/i.test(files[0].name)) {
-    const zipb64 = mkb64(await files[0].arrayBuffer());
-    const r = await post('/api/skin/import', { zipb64, name: files[0].name.replace(/\.zip$/i, '') });
-    r.ok ? log('✓ ' + r.message) : log('✗ ' + r.error, 'err');
-    await refresh(); return;
-  }
-  const out = [];
-  for (const f of files) {
-    const rel = f.webkitRelativePath || f.name;
-    if (rel.includes('/')) continue;
-    out.push({ name: f.name, b64: mkb64(await f.arrayBuffer()) });
-  }
-  if (!out.length) return toast('没读到文件', 'warn');
-  const root = (files[0].webkitRelativePath || files[0].name).split('/')[0];
-  const r = await post('/api/skin/import', { name: root, files: out });
-  r.ok ? log('✓ ' + r.message) : log('✗ ' + r.error, 'err');
-  await refresh();
-}
 
 async function installFromZip(file) {
   const zipb64 = mkb64(await file.arrayBuffer());
@@ -594,7 +394,7 @@ function openNotice() {
       <p>本工具是《战争雷霆》玩家自制的<b>模组辅助工具</b>，只做三件事：</p>
       <ol>
         <li>从<b>你本机</b>的游戏文件里提取语音 / 头像素材</li>
-        <li>把素材加工成语音包 / 涂装</li>
+        <li>把素材加工成语音包</li>
         <li>把成品装回<b>你本机</b>的游戏目录</li>
       </ol>
       <p>不提供任何游戏本体资源下载，不绕过反作弊，不修改游戏内存，<b>不联网上传任何数据</b>。</p>
@@ -607,7 +407,7 @@ function openNotice() {
             用于医疗、自动驾驶、<b>军事</b>、关键基础设施等高风险场景。本工具仅用于
             <b>游戏模组制作与个人娱乐</b>，不做任何现实用途。</li>
       </ul>
-      <p>用本工具生成的语音包 / 涂装，请自行确认是否违反游戏用户协议；
+      <p>用本工具生成的语音包，请自行确认是否违反游戏用户协议；
          作者不对封号、纠纷等后果负责。</p>
     </div>
     <div class="foot"><button class="btn primary" data-close>我知道了</button></div>`);

@@ -5,26 +5,23 @@ r"""
 启动：双击 启动圆桌工程.bat   →   浏览器打开 http://127.0.0.1:8788
 
 目录
-    涂装\涂装库\      涂装母版
-    涂装\色板\        GIMP 色板
     语音\原版\        从游戏里提取出来的原版乘员语音
     语音\工程\        每个语音包的工程（素材 / 转换结果 / bank）
     语音\成品\        打包好的可分发成品
-    核心\            引擎（texconv / vgmstream / check_skin_compat）
+    头像\             从游戏里提取出来的头像 / 头像框 / 资料页头图
+    核心\            引擎（vgmstream）与内置数据表
     web\             前端
     config.json      路径与参数（首次运行自动生成）
 """
 
 import base64
 import csv
-import hashlib
 import io
 import json
 import os
 import re
 import shutil
 import socket
-import struct
 import subprocess
 import sys
 import threading
@@ -44,8 +41,6 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 WEBROOT = os.path.join(BASE, 'web')
 CORE = os.path.join(BASE, '核心')
 CACHE = os.path.join(BASE, '_cache')
-SKIN_ROOT = os.path.join(BASE, '涂装', '涂装库')
-PALETTE = os.path.join(BASE, '涂装', '色板')
 VOICE = os.path.join(BASE, '语音')
 VOICE_ORIG = os.path.join(VOICE, '原版')
 VOICE_PROJ = os.path.join(VOICE, '工程')
@@ -54,17 +49,13 @@ VOICE_PACK = os.path.join(VOICE, '成品')
 TMP_IMPORT = os.path.join(BASE, '_import_tmp')
 CONFIG_PATH = os.path.join(BASE, 'config.json')
 
-TEXCONV = os.path.join(CORE, 'texconv.exe')
-COMPAT = os.path.join(CORE, 'check_skin_compat.py')
 VGM = os.path.join(CORE, 'vgmstream', 'vgmstream-cli.exe')
 NO_WINDOW = 0x08000000 if os.name == 'nt' else 0
-THUMB_MAX = 320
 IMAGE_EXT = ('.tga', '.dds', '.png', '.bmp', '.jpg', '.jpeg')
 AUDIO_EXT = ('.wav', '.mp3', '.flac', '.ogg', '.m4a', '.opus')
 
 DEFAULT_CONFIG = {
     'game_root': '',
-    'gimp': '',
     'port': 8788,
     'sdv_root': '',
     'tts_root': '',
@@ -88,7 +79,6 @@ MAIN_LANGS = ['en', 'en_us', 'ru', 'de', 'zh', 'jp', 'fr', 'he']
 # _crew_dialogs_ground_sm_XX —— 这六国的"第二套"陆战录音（内容仍是陆战台词）
 SM_ALT = {'sm_uk': 'en', 'sm_us': 'en_us', 'sm_de': 'de', 'sm_jp': 'jp', 'sm_ru': 'ru', 'sm_zh': 'zh'}
 
-_thumb_lock = threading.Lock()
 _jobs = {}
 _job_seq = [0]
 
@@ -148,24 +138,6 @@ def detect_game_root():
     return ''
 
 
-def detect_gimp():
-    local = os.environ.get('LOCALAPPDATA', '')
-    for root in (os.path.join(local, 'Programs'), r'C:\Program Files', r'C:\Program Files (x86)'):
-        if not root or not os.path.isdir(root):
-            continue
-        try:
-            for name in os.listdir(root):
-                if name.lower().startswith('gimp'):
-                    b = os.path.join(root, name, 'bin')
-                    for exe in ('gimp-3.0.exe', 'gimp-2.10.exe', 'gimp.exe'):
-                        p = os.path.join(b, exe)
-                        if os.path.isfile(p):
-                            return p
-        except OSError:
-            pass
-    return ''
-
-
 def resolved(cfg):
     gr = (cfg.get('game_root') or '').strip()
     if len(gr) > 1 and gr[1] == ':':
@@ -175,10 +147,6 @@ def resolved(cfg):
         d = detect_game_root()
         if d:
             cfg['game_root'] = d
-    if not cfg.get('gimp') or not os.path.isfile(cfg.get('gimp', '')):
-        d = detect_gimp()
-        if d:
-            cfg['gimp'] = d
     # 扩展目录：优先用设置里的，其次看包内的「扩展」文件夹
     for key, names in (('sdv_root', ('SDV', 'SeedVC', 'sdv')),
                        ('tts_root', ('TTS', 'IndexTTS2', 'tts'))):
@@ -381,417 +349,6 @@ def parse_script(text):
             if body:
                 out.append({'id': '', 'text': body})
     return out
-
-
-# ================================================================= 涂装模块
-
-KB_PATH = os.path.join(CORE, '载具通用性知识库.json')
-_NAME_CACHE = {'mtime': None, 'data': None}
-_KB_CACHE = {'mtime': None, 'data': None}
-NATION_RE = re.compile(r'^(us|g|ussr|uk|jp|cn|it|fr|sw|il)_[a-z0-9_]+$')
-_FAM_STOP = {
-    'tank', 'infantry', 'medium', 'light', 'heavy', 'super', 'main', 'battle', 'combat',
-    'mk', 'mark', 'the', 'of', 'and', 'for', 'class', 'type', 'late', 'early', 'mod',
-    'pz', 'kpfw', 'ausf', 'sfl', 'flak', 'spg', 'spaa', 'mbt', 'ifv', 'apc', 'aa', 'at',
-}
-
-
-def load_vehicle_names(cfg):
-    """从游戏 lang\\units.csv 建 载具ID -> {zh,en} 表（带 mtime 缓存）。"""
-    path = os.path.join(cfg.get('game_root') or '', 'lang', 'units.csv')
-    if not os.path.isfile(path):
-        return {}
-    try:
-        mt = os.path.getmtime(path)
-        if _NAME_CACHE['mtime'] == mt and _NAME_CACHE['data']:
-            return _NAME_CACHE['data']
-        names = {}
-        with open(path, 'r', encoding='utf-8', errors='replace') as f:
-            for line in f:
-                if not line.startswith('"'):
-                    continue
-                cols = line.split('";"')
-                key = cols[0].strip('"').strip()
-                m = re.match(r'^(.+?)_([0-9])$', key)
-                if not m:
-                    continue
-                base, idx = m.group(1), m.group(2)
-                if not NATION_RE.match(base):
-                    continue
-                en = cols[1] if len(cols) > 1 else ''
-                zh = cols[10].replace('\u200b', '') if len(cols) > 10 else ''
-                en = en.replace('\u200b', '').strip()
-                zh = zh.replace('\u200b', '').strip()
-                cur = names.setdefault(base, {'en': '', 'zh': '', '_0': False})
-                if idx == '0':
-                    cur['en'], cur['zh'], cur['_0'] = en, zh, True
-                elif not cur['_0'] and not cur['en']:
-                    cur['en'], cur['zh'] = en, zh
-        for v in names.values():
-            v.pop('_0', None)
-        _NAME_CACHE['mtime'] = mt
-        _NAME_CACHE['data'] = names
-        return names
-    except Exception:
-        return {}
-
-
-def vehicle_label(cfg, veh_id):
-    n = load_vehicle_names(cfg).get(veh_id)
-    if not n:
-        return ''
-    return n.get('zh') or n.get('en') or ''
-
-
-def parse_blk_text(text):
-    out = []
-    for m in re.finditer(r'(\w+)\s*\{([^}]*)\}', text or '', re.S):
-        kind, body = m.group(1), m.group(2)
-        d = dict(re.findall(r'(\w+)\s*:t\s*=\s*"([^"]*)"', body))
-        frm = (d.get('from') or '').rstrip('*')
-        if not frm:
-            continue
-        out.append({'kind': kind, 'from': frm, 'to': d.get('to', ''), 'param': d.get('param', '')})
-    return out
-
-
-def parse_blk_file(path):
-    try:
-        with open(path, 'r', encoding='utf-8', errors='replace') as f:
-            info = parse_blk_text(f.read())
-    except OSError:
-        return None
-    t = {'body': '', 'turret': '', 'gun': '', 'camo': ''}
-    for it in info:
-        frm = it['from']
-        if it['kind'] == 'replace_tex':
-            t['camo'] = t['camo'] or frm
-        elif frm.endswith('_body_c'):
-            t['body'] = frm
-        elif frm.endswith('_turret_c'):
-            t['turret'] = frm
-        elif frm.endswith('_gun_c'):
-            t['gun'] = frm
-    return t
-
-
-def family_key(en):
-    words = re.findall(r'[A-Za-z][A-Za-z0-9\-\.]{2,}', en or '')
-    cand = [w for w in words if w.lower().strip('.') not in _FAM_STOP]
-    return max(cand, key=len) if cand else ''
-
-
-def build_kb(cfg):
-    names = load_vehicle_names(cfg)
-    textures, src = {}, {}
-    for root, label in ((skin_dir_of(cfg), '游戏 UserSkins'), (SKIN_ROOT, '本工程涂装库')):
-        if not os.path.isdir(root):
-            continue
-        for path in collect_files(root, ('.blk',)):
-            veh = os.path.splitext(os.path.basename(path))[0]
-            t = parse_blk_file(path)
-            if not t:
-                continue
-            prev = textures.get(veh)
-            if prev is None or (not prev.get('body') and t.get('body')):
-                textures[veh] = t
-                src[veh] = path
-    fams = {}
-    for vid, n in names.items():
-        k = family_key(n.get('en') or '')
-        if k:
-            fams.setdefault(k, []).append(vid)
-    kb = {
-        'updated': time.strftime('%Y-%m-%d %H:%M:%S'),
-        'game': cfg.get('game_root') or '',
-        'names': names,
-        'textures': textures,
-        'sources': src,
-        'families': {k: sorted(v) for k, v in fams.items() if len(v) > 1},
-    }
-    try:
-        with open(KB_PATH, 'w', encoding='utf-8') as f:
-            json.dump(kb, f, ensure_ascii=False, indent=1)
-    except OSError:
-        pass
-    return kb
-
-
-def load_kb(cfg, rebuild=False):
-    if not rebuild and os.path.isfile(KB_PATH):
-        mt = os.path.getmtime(KB_PATH)
-        if _KB_CACHE['mtime'] == mt and _KB_CACHE['data']:
-            return _KB_CACHE['data']
-        try:
-            with open(KB_PATH, 'r', encoding='utf-8') as f:
-                kb = json.load(f)
-            if kb.get('textures') is not None and kb.get('names'):
-                _KB_CACHE.update(mtime=mt, data=kb)
-                return kb
-        except Exception:
-            pass
-    return build_kb(cfg)
-
-
-def _same_tex(a, b, part):
-    return (a or {}).get(part, '') != '' and (a or {}).get(part, '') == (b or {}).get(part, '')
-
-
-def check_compat(cfg, vehicle, skin=''):
-    kb = load_kb(cfg)
-    names = kb.get('names') or {}
-    tex = kb.get('textures') or {}
-    tgt = tex.get(vehicle)
-    fam = []
-    n = names.get(vehicle)
-    if n:
-        fk = family_key(n.get('en') or '')
-        fam = [v for v in (kb.get('families') or {}).get(fk, []) if v != vehicle]
-    same, partial, unknown = [], [], []
-    if tgt:
-        for v, t in tex.items():
-            if v == vehicle:
-                continue
-            parts = {p: _same_tex(tgt, t, p) for p in ('body', 'turret', 'gun', 'camo')}
-            rec = {'id': v, 'label': (names.get(v) or {}).get('zh') or (names.get(v) or {}).get('en') or v,
-                   'parts': parts}
-            if all(parts.values()):
-                same.append(rec)
-            elif parts['body']:
-                partial.append(rec)
-    for v in fam:
-        if v not in tex:
-            unknown.append({'id': v, 'label': (names.get(v) or {}).get('zh') or (names.get(v) or {}).get('en') or v})
-    return {
-        'vehicle': vehicle,
-        'vehicleLabel': (names.get(vehicle) or {}).get('zh') or (names.get(vehicle) or {}).get('en') or '',
-        'skin': skin,
-        'textures': tgt or {},
-        'family': (family_key(n.get('en')) if n else ''),
-        'familyTotal': len((kb.get('families') or {}).get(family_key(n.get('en')), [])) if n else 0,
-        'same': same, 'partial': partial, 'unknown': unknown,
-        'kbUpdated': kb.get('updated'),
-        'kbCount': len(tex),
-    }
-
-def _u16(b, o):
-    return struct.unpack_from('<H', b, o)[0]
-
-
-def _u32(b, o):
-    return struct.unpack_from('<I', b, o)[0]
-
-
-def image_size(path):
-    ext = os.path.splitext(path)[1].lower()
-    try:
-        with open(path, 'rb') as f:
-            head = f.read(32)
-        if ext == '.tga':
-            return _u16(head, 12), _u16(head, 14)
-        if ext == '.dds':
-            return _u32(head, 16), _u32(head, 12)
-        if ext == '.png':
-            return _u32(head, 16), _u32(head, 20)
-        if ext == '.bmp':
-            return _u32(head, 18), _u32(head, 22)
-    except Exception:
-        pass
-    return None
-
-
-def texconv_thumb(src, dst):
-    if not os.path.isfile(TEXCONV):
-        raise RuntimeError('找不到 核心\\texconv.exe')
-    args = [TEXCONV, '-nologo', '-y', '-f', 'B8G8R8X8_UNORM', '-ft', 'png']
-    size = image_size(src)
-    if size and size[0] and size[1]:
-        w, h = size
-        s = min(1.0, THUMB_MAX / float(max(w, h)))
-        args += ['-w', str(max(1, int(round(w * s)))), '-h', str(max(1, int(round(h * s))))]
-    tmp = os.path.join(CACHE, '_t%d' % (int(time.time() * 1000) % 100000))
-    os.makedirs(tmp, exist_ok=True)
-    args += ['-o', tmp, src]
-    p = subprocess.run(args, capture_output=True, creationflags=NO_WINDOW)
-    made = os.path.join(tmp, os.path.splitext(os.path.basename(src))[0] + '.png')
-    if not os.path.isfile(made):
-        shutil.rmtree(tmp, ignore_errors=True)
-        raise RuntimeError('缩略图转换失败：' + (p.stderr or b'').decode('utf-8', 'replace')[:160])
-    os.replace(made, dst)
-    shutil.rmtree(tmp, ignore_errors=True)
-
-
-def thumbnail(vehicle, skin, fname):
-    src = safe_join(safe_join(SKIN_ROOT, vehicle), skin, fname)
-    if os.path.splitext(fname)[1].lower() not in IMAGE_EXT:
-        raise ValueError('不是图片')
-    if not os.path.isfile(src):
-        raise FileNotFoundError('文件不存在')
-    key = hashlib.md5((src + '|' + str(os.path.getmtime(src))).encode('utf-8')).hexdigest()
-    dst = os.path.join(CACHE, key + '.png')
-    if not os.path.isfile(dst):
-        with _thumb_lock:
-            if not os.path.isfile(dst):
-                texconv_thumb(src, dst)
-    return dst
-
-
-def skin_dir_of(cfg):
-    return os.path.join(cfg.get('game_root') or '', 'UserSkins')
-
-
-def list_skins(cfg):
-    skins_dir = skin_dir_of(cfg)
-    items = []
-    if not os.path.isdir(SKIN_ROOT):
-        return items
-    for vehicle in sorted(os.listdir(SKIN_ROOT)):
-        vdir = os.path.join(SKIN_ROOT, vehicle)
-        if not os.path.isdir(vdir):
-            continue
-        for skin in sorted(os.listdir(vdir)):
-            sdir = os.path.join(vdir, skin)
-            if not os.path.isdir(sdir):
-                continue
-            files, size, mtime = [], 0, 0
-            for f in sorted(os.listdir(sdir)):
-                fp = os.path.join(sdir, f)
-                if os.path.isfile(fp):
-                    files.append(f)
-                    size += os.path.getsize(fp)
-                    mtime = max(mtime, os.path.getmtime(fp))
-            blks = [f for f in files if f.lower().endswith('.blk')]
-            inst = os.path.join(skins_dir, skin) if skins_dir else ''
-            installed = bool(inst) and os.path.isdir(inst)
-            dirty = False
-            if installed:
-                try:
-                    back = [f for f in os.listdir(inst) if os.path.isfile(os.path.join(inst, f))]
-                    if sorted(back) != sorted(files):
-                        dirty = True
-                    else:
-                        for f in files:
-                            a, b = os.path.join(sdir, f), os.path.join(inst, f)
-                            if (os.path.getsize(a) != os.path.getsize(b)
-                                    or int(os.path.getmtime(a)) != int(os.path.getmtime(b))):
-                                dirty = True
-                                break
-                except OSError:
-                    dirty = True
-            items.append({
-                'vehicle': vehicle, 'name': skin, 'files': files,
-                'images': [f for f in files if os.path.splitext(f)[1].lower() in IMAGE_EXT],
-                'blk': blks[0] if blks else None, 'blkCount': len(blks),
-                'sizeKB': round(size / 1024.0, 1), 'installed': installed, 'dirty': dirty,
-                'mtime': int(mtime),
-            })
-    return items
-
-
-def read_blk(vehicle, skin):
-    d = safe_join(safe_join(SKIN_ROOT, vehicle), skin)
-    out = []
-    for f in sorted(os.listdir(d)):
-        if f.lower().endswith('.blk'):
-            with open(os.path.join(d, f), 'r', encoding='utf-8', errors='replace') as fh:
-                out.append([f, fh.read()])
-    return out
-
-
-def do_skin_install(cfg, p):
-    src = safe_join(safe_join(SKIN_ROOT, p['vehicle']), p['name'])
-    root = skin_dir_of(cfg)
-    if not os.path.isdir(root):
-        raise RuntimeError('找不到 UserSkins，检查游戏路径：' + root)
-    dst = os.path.join(root, p['name'])
-    if os.path.isdir(dst) and not p.get('overwrite'):
-        return {'needConfirm': True, 'message': '游戏目录里已有同名文件夹「%s」，要覆盖吗？' % p['name']}
-    if os.path.isdir(dst):
-        shutil.rmtree(dst)
-    shutil.copytree(src, dst)
-    return {'ok': True, 'message': '已装进游戏：' + p['name']}
-
-
-def do_skin_uninstall(cfg, p):
-    root = skin_dir_of(cfg)
-    dst = safe_join(root, p['target'])
-    if not os.path.isdir(dst):
-        raise RuntimeError('游戏目录里没有「%s」' % p['target'])
-    shutil.rmtree(dst)
-    return {'ok': True, 'message': '已从游戏移除：' + p['target']}
-
-
-def do_skin_delete(cfg, p):
-    shutil.rmtree(safe_join(safe_join(SKIN_ROOT, p['vehicle']), p['name']))
-    parent = safe_join(SKIN_ROOT, p['vehicle'])
-    try:
-        if not os.listdir(parent):
-            os.rmdir(parent)
-    except OSError:
-        pass
-    return {'ok': True, 'message': '已从库中删除：' + p['name']}
-
-
-def do_skin_rename(cfg, p):
-    new = clean_name(p['newName'])
-    if not new:
-        raise RuntimeError('名字不能为空')
-    src = safe_join(safe_join(SKIN_ROOT, p['vehicle']), p['name'])
-    dst = safe_join(safe_join(SKIN_ROOT, p['vehicle']), new)
-    if os.path.exists(dst):
-        raise RuntimeError('已经有一套叫「%s」的了' % new)
-    os.rename(src, dst)
-    return {'ok': True, 'message': '已改名为：' + new}
-
-
-def do_skin_new(cfg, p):
-    name = clean_name(p.get('name') or '')
-    if not name:
-        raise RuntimeError('新涂装名不能为空')
-    src = safe_join(safe_join(SKIN_ROOT, p['vehicle']), p['base'])
-    vdir = safe_join(SKIN_ROOT, p['vehicle'])
-    os.makedirs(vdir, exist_ok=True)
-    dst = os.path.join(vdir, name)
-    if os.path.exists(dst):
-        raise RuntimeError('已经有一套叫「%s」的了' % name)
-    shutil.copytree(src, dst)
-    return {'ok': True, 'message': '已新建：' + name}
-
-
-def do_skin_edit(cfg, p):
-    gimp = cfg.get('gimp') or detect_gimp()
-    d = safe_join(safe_join(SKIN_ROOT, p['vehicle']), p['name'])
-    imgs = [os.path.join(d, f) for f in sorted(os.listdir(d))
-            if os.path.splitext(f)[1].lower() in IMAGE_EXT]
-    if not imgs:
-        raise RuntimeError('这一套里没有图片')
-    if not gimp or not os.path.isfile(gimp):
-        if os.name == 'nt':
-            os.startfile(d)
-        raise RuntimeError('找不到 GIMP，请在设置里填路径（已帮你打开该文件夹）')
-    subprocess.Popen([gimp] + imgs, creationflags=NO_WINDOW)
-    return {'ok': True, 'message': '已用 GIMP 打开 %d 个文件' % len(imgs)}
-
-
-def do_skin_convert(cfg, p):
-    d = safe_join(safe_join(SKIN_ROOT, p['vehicle']), p['name'])
-    out = os.path.join(os.path.dirname(d), os.path.basename(d) + '_dds')
-    os.makedirs(out, exist_ok=True)
-    n = 0
-    for f in sorted(os.listdir(d)):
-        if os.path.splitext(f)[1].lower() in ('.tga', '.png'):
-            subprocess.run([TEXCONV, '-nologo', '-f', 'BC3_UNORM', '-m', '1', '-y', '-o', out,
-                            os.path.join(d, f)], capture_output=True, creationflags=NO_WINDOW)
-            n += 1
-    return {'ok': True, 'message': '已转换 %d 张 → %s' % (n, out)}
-
-
-def do_compat(cfg):
-    if not os.path.isfile(COMPAT):
-        raise RuntimeError('找不到 核心\\check_skin_compat.py')
-    p = subprocess.run([sys.executable, COMPAT, cfg.get('game_root') or ''],
-                       capture_output=True, creationflags=NO_WINDOW)
-    return {'ok': True, 'text': ((p.stdout or b'') + (p.stderr or b'')).decode('utf-8', 'replace').strip()}
 
 
 # ================================================================= 语音模块
@@ -1057,7 +614,6 @@ def voice_state(cfg):
         'installed': list_installed_mods(cfg),
         'tools': {
             'vgmstream': os.path.isfile(VGM),
-            'texconv': os.path.isfile(TEXCONV),
             'sdv': os.path.isfile(sdv_py),
             'sdvRoot': sdv,
             'tts': os.path.isdir(os.path.join(tts, 'index-tts')),
@@ -1484,87 +1040,6 @@ OTHER_TTS = [
 ]
 
 
-def _reg_photoshop():
-    exe, plug = '', ''
-    try:
-        import winreg
-        for hive in (winreg.HKEY_LOCAL_MACHINE, winreg.HKEY_CURRENT_USER):
-            for sub in (r'SOFTWARE\Adobe\Photoshop', r'SOFTWARE\WOW6432Node\Adobe\Photoshop'):
-                try:
-                    with winreg.OpenKey(hive, sub) as k:
-                        for i in range(winreg.QueryInfoKey(k)[0]):
-                            ver = winreg.EnumKey(k, i)
-                            with winreg.OpenKey(k, ver) as vk:
-                                try:
-                                    p = str(winreg.QueryValueEx(vk, 'ApplicationPath')[0])
-                                    if os.path.isfile(os.path.join(p, 'Photoshop.exe')):
-                                        exe = os.path.join(p, 'Photoshop.exe')
-                                except OSError:
-                                    pass
-                                try:
-                                    plug = str(winreg.QueryValueEx(vk, 'PluginPath')[0])
-                                except OSError:
-                                    pass
-                except OSError:
-                    pass
-    except Exception:
-        pass
-    return exe, plug
-
-
-def detect_photoshop():
-    exe, plug = _reg_photoshop()
-    if not exe:
-        for r in (r'C:\Program Files\Adobe', r'D:\Program Files\Adobe',
-                  r'C:\Program Files (x86)\Adobe', r'D:\Adobe', r'C:\Adobe'):
-            if not os.path.isdir(r):
-                continue
-            for d in os.listdir(r):
-                if d.lower().startswith('adobe photoshop'):
-                    p = os.path.join(r, d, 'Photoshop.exe')
-                    if os.path.isfile(p):
-                        exe = p
-    return exe, plug
-
-
-def find_dds_plugins(ps_exe, ps_plug):
-    """找 Photoshop / GIMP 的 DDS 支持（.8bi 插件 或 GIMP 的 file-dds）。"""
-    ps_dds = ''
-    dirs = []
-    if ps_plug and os.path.isdir(ps_plug):
-        dirs.append(ps_plug)
-    if ps_exe:
-        base = os.path.dirname(ps_exe)
-        dirs += [os.path.join(base, 'Plug-ins'), os.path.join(base, 'Required', 'Plug-ins'),
-                 os.path.join(base, 'Plugins')]
-    for d in dirs:
-        if not os.path.isdir(d):
-            continue
-        try:
-            for root, _dirs, files in os.walk(d):
-                for f in files:
-                    low = f.lower()
-                    if low.endswith('.8bi') and ('dds' in low or 'nvidia' in low or 'texture' in low):
-                        ps_dds = os.path.join(root, f)
-                        break
-                if ps_dds:
-                    break
-        except OSError:
-            pass
-        if ps_dds:
-            break
-    gimp_exe = detect_gimp()
-    gimp_dds = ''
-    if gimp_exe:
-        root = os.path.dirname(os.path.dirname(gimp_exe))
-        for ver in ('3.0', '2.10', '2.0'):
-            p = os.path.join(root, 'lib', 'gimp', ver, 'plug-ins', 'file-dds', 'file-dds.exe')
-            if os.path.isfile(p):
-                gimp_dds = p
-                break
-    return ps_dds, gimp_dds
-
-
 _GPU_CACHE = None
 
 
@@ -1606,9 +1081,6 @@ def detect_gpu():
 
 def env_state(cfg):
     gpu = detect_gpu()
-    ps_exe, ps_plug = detect_photoshop()
-    ps_dds, gimp_dds = find_dds_plugins(ps_exe, ps_plug)
-    gimp_exe = cfg.get('gimp') or detect_gimp()
     sdv_root = cfg.get('sdv_root') or ''
     sdv_py = sdv_python(cfg)
     sdv_ckpt = os.path.join(sdv_root, 'seed-vc', 'checkpoints')
@@ -1638,16 +1110,6 @@ def env_state(cfg):
                                              '官方安装器设计为共用一套运行时，只装一份。'},
             'ttsLang': {'ok': TTS_LANG_OK, 'maybe': TTS_LANG_MAYBE, 'bad': TTS_LANG_BAD, 'note': TTS_LANG_NOTE},
             'otherTts': OTHER_TTS,
-        },
-        'skin': {
-            'gimp': {'exe': gimp_exe, 'ok': bool(gimp_exe),
-                     'dds': gimp_dds, 'ddsOk': bool(gimp_dds),
-                     'url': 'https://www.gimp.org/downloads/'},
-            'ps': {'exe': ps_exe, 'ok': bool(ps_exe),
-                   'dds': ps_dds, 'ddsOk': bool(ps_dds),
-                   'url': 'https://www.adobe.com/products/photoshop.html',
-                   'ddsUrl': 'https://developer.nvidia.com/texture-tools-exporter'},
-            'bundled': {'texconv': os.path.isfile(TEXCONV), 'note': '内置 texconv，不需要额外装东西也能转 DDS。'},
         },
         'avatars': {'dir': AVATAR_DIR, 'extracted': sum(
             len([f for f in os.listdir(os.path.join(AVATAR_DIR, k)) if f.lower().endswith('.avif')])
@@ -1942,12 +1404,11 @@ class Handler(BaseHTTPRequestHandler):
             if path in static_map():
                 return self.send_file(os.path.join(WEBROOT, static_map()[path]))
             if path == '/api/state':
-                return self.send_json({'ok': True, 'skin': self.skin_state(cfg),
-                                       'voice': voice_state(cfg),
+                return self.send_json({'ok': True, 'voice': voice_state(cfg),
                                        'env': env_state(cfg),
                                        'avatars': list_avatars(),
                                        'config': {k: cfg.get(k, '') for k in
-                                                  ('game_root', 'gimp', 'sdv_root', 'tts_root',
+                                                  ('game_root', 'sdv_root', 'tts_root',
                                                    'uvr_root', 'fmod_kit')}})
             if path == '/api/env':
                 return self.send_json({'ok': True, 'env': env_state(cfg)})
@@ -1958,12 +1419,6 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError('分类不对')
                 fp = safe_join(os.path.join(AVATAR_DIR, c), f)
                 return self.send_file(fp, 'image/avif', cache=True)
-            if path == '/api/skin/thumb':
-                return self.send_file(thumbnail(q['v'][0], q['s'][0], q['f'][0]), 'image/png', cache=True)
-            if path == '/api/skin/blk':
-                return self.send_json({'ok': True, 'blocks': read_blk(q['v'][0], q['s'][0])})
-            if path == '/api/skin/compat':
-                return self.send_json(do_compat(cfg))
             if path == '/api/job':
                 jid = q['id'][0]
                 from_i = int(q.get('from', ['0'])[0])
@@ -1993,9 +1448,10 @@ class Handler(BaseHTTPRequestHandler):
                     parent = ''
                 return self.send_json({'ok': True, 'path': d, 'parent': parent,
                                        'dirs': dirs, 'files': files,
-                                       'shortcuts': [['圆桌工程', BASE], ['涂装库', SKIN_ROOT],
+                                       'shortcuts': [['圆桌工程', BASE],
                                                      ['语音工程', VOICE], ['原版语音', VOICE_ORIG],
                                                      ['成品', VOICE_PACK], ['参考音色', VOICE_REF],
+                                                     ['头像', AVATAR_DIR],
                                                      ['桌面', os.path.expanduser('~\\Desktop')],
                                                      ['D 盘', 'D:\\'], ['C 盘', 'C:\\']]})
             self.send_error(404)
@@ -2003,24 +1459,6 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json({'ok': False, 'error': '缺少参数 %s' % e}, 400)
         except Exception as e:
             self.send_json({'ok': False, 'error': str(e)}, 500)
-
-    def skin_state(self, cfg):
-        skins = list_skins(cfg)
-        names = load_vehicle_names(cfg)
-        used = {}
-        for s in skins:
-            if s['vehicle'] not in used:
-                n = names.get(s['vehicle']) or {}
-                used[s['vehicle']] = {'zh': n.get('zh', ''), 'en': n.get('en', '')}
-        kb = load_kb(cfg)
-        return {'libraryRoot': SKIN_ROOT, 'paletteRoot': PALETTE, 'gameRoot': cfg.get('game_root') or '',
-                'skinRoot': skin_dir_of(cfg), 'gimp': cfg.get('gimp') or '',
-                'gimpFound': bool(cfg.get('gimp')) and os.path.isfile(cfg['gimp']),
-                'texconvFound': os.path.isfile(TEXCONV), 'skins': skins,
-                'vehicleNames': used,
-                'kb': {'updated': kb.get('updated') or '', 'count': len(kb.get('textures') or {}),
-                       'names': len(kb.get('names') or {}),
-                       'families': len(kb.get('families') or {})}}
 
     def read_body(self):
         n = int(self.headers.get('Content-Length') or 0)
@@ -2043,7 +1481,7 @@ class Handler(BaseHTTPRequestHandler):
     def dispatch(self, cfg, path, p):
         # ---- 通用
         if path == '/api/config':
-            for k in ('game_root', 'gimp', 'sdv_root', 'tts_root', 'uvr_root', 'fmod_kit'):
+            for k in ('game_root', 'sdv_root', 'tts_root', 'uvr_root', 'fmod_kit'):
                 if k in p:
                     cfg[k] = str(p[k]).strip()
             save_config(cfg)
@@ -2052,8 +1490,7 @@ class Handler(BaseHTTPRequestHandler):
             return {'ok': True, 'message': '设置已保存'}
         if path == '/api/open':
             t = p.get('target')
-            table = {'library': SKIN_ROOT, 'game': skin_dir_of(cfg), 'palette': PALETTE,
-                     'voice': VOICE, 'orig': VOICE_ORIG, 'proj': VOICE_PROJ, 'pack': VOICE_PACK,
+            table = {'voice': VOICE, 'orig': VOICE_ORIG, 'proj': VOICE_PROJ, 'pack': VOICE_PACK,
                      'ref': VOICE_REF, 'mod': mod_dir(cfg), 'core': CORE,
                      'sdv': cfg.get('sdv_root') or '', 'tts': cfg.get('tts_root') or '',
                      'uvr': cfg.get('uvr_root') or '', 'fmodkit': cfg.get('fmod_kit') or '',
@@ -2065,30 +1502,6 @@ class Handler(BaseHTTPRequestHandler):
                 os.startfile(d)
             return {'ok': True, 'message': '已打开 ' + d}
 
-        # ---- 涂装
-        if path == '/api/skin/install':
-            return do_skin_install(cfg, p)
-        if path == '/api/skin/uninstall':
-            return do_skin_uninstall(cfg, p)
-        if path == '/api/skin/delete':
-            return do_skin_delete(cfg, p)
-        if path == '/api/skin/rename':
-            return do_skin_rename(cfg, p)
-        if path == '/api/skin/new':
-            return do_skin_new(cfg, p)
-        if path == '/api/skin/edit':
-            return do_skin_edit(cfg, p)
-        if path == '/api/skin/convert':
-            return do_skin_convert(cfg, p)
-        if path == '/api/skin/import':
-            return self.import_skin(p)
-        if path == '/api/skin/kb-scan':
-            kb = build_kb(cfg)
-            _KB_CACHE['mtime'] = None
-            return {'ok': True, 'message': '知识库已更新：收录 %d 台载具的纹理映射、%d 个车族'
-                                           % (len(kb.get('textures') or {}), len(kb.get('families') or {}))}
-        if path == '/api/skin/check':
-            return dict({'ok': True}, **check_compat(cfg, p.get('vehicle', ''), p.get('name', '')))
         if path == '/api/upload':
             d = p.get('dir') or VOICE_REF
             os.makedirs(d, exist_ok=True)
@@ -2189,30 +1602,6 @@ class Handler(BaseHTTPRequestHandler):
 
     # ---- 导入
 
-    def import_skin(self, p):
-        tmp = materialize(p)
-        try:
-            entries = os.listdir(tmp)
-            while len(entries) == 1 and os.path.isdir(os.path.join(tmp, entries[0])):
-                tmp = os.path.join(tmp, entries[0])
-                entries = os.listdir(tmp)
-            blks = [e for e in entries if e.lower().endswith('.blk')]
-            if not blks:
-                raise RuntimeError('里面没有 .blk，游戏不会认这套涂装')
-            vehicle = clean_name(p.get('vehicle') or os.path.splitext(blks[0])[0])
-            name = clean_name(p.get('name') or vehicle)
-            vdir = os.path.join(SKIN_ROOT, vehicle)
-            os.makedirs(vdir, exist_ok=True)
-            dst = os.path.join(vdir, name)
-            i = 2
-            while os.path.exists(dst):
-                dst = os.path.join(vdir, '%s (%d)' % (name, i))
-                i += 1
-            shutil.copytree(tmp, dst)
-            return {'ok': True, 'message': '已导入涂装：%s' % os.path.basename(dst)}
-        finally:
-            shutil.rmtree(TMP_IMPORT, ignore_errors=True)
-
     def import_voice(self, p):
         tmp = materialize(p)
         try:
@@ -2279,7 +1668,7 @@ def main():
     no_browser = '--no-browser' in [a.lower() for a in argv]
     cfg = resolved(load_config())
     save_config(cfg)
-    for d in (CACHE, SKIN_ROOT, PALETTE, VOICE_ORIG, VOICE_PROJ, VOICE_PACK, VOICE_REF):
+    for d in (CACHE, VOICE_ORIG, VOICE_PROJ, VOICE_PACK, VOICE_REF):
         try:
             os.makedirs(d, exist_ok=True)
         except OSError:
