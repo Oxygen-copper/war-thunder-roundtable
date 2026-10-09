@@ -2,15 +2,17 @@
 <#
   把「战雷圆桌工程」打成一个可以对外发的压缩包。
   只带程序本体（约 12 MB），不带用户数据、不带两个大模型。
-  用法：双击 打包发行版.bat
-  自动化调用：powershell -File 打包发行版.ps1 -NoPause
+  放在 tools\ 里，是开发用的打包脚本，不随发行包分发。
+  用法：双击 tools\打包发行版.bat
+  自动化调用：powershell -File tools\打包发行版.ps1 -NoPause
 #>
 param([switch]$NoPause)
 
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-$root  = $PSScriptRoot
+# 脚本在 tools\ 下，工程根目录是它的上一级
+$root  = Split-Path -Parent $PSScriptRoot
 $stage = Join-Path $env:TEMP ('wtrt_pack_' + [guid]::NewGuid().ToString('N').Substring(0, 8))
 $dst   = Join-Path $stage '战雷圆桌工程'
 $zip   = Join-Path $root '战雷圆桌工程-发行版.zip'
